@@ -21,7 +21,6 @@ class Processor:
         # train set
         if self.data_args.train_dir is not None:
             train_data = self.load_data(self.data_args.train_dir, 'train')
-            print(train_data)
             
             if self.data_args.max_train_samples is not None:
                 train_data = train_data.select(range(self.data_args.max_train_samples))
@@ -62,11 +61,11 @@ class Processor:
             # data_file = f"{data_path}/*.{extention}"
             data_file = data_path
             if self.data_args.streaming:
-                datasets = datasets.load_from_disk(
+                datasets = datasets.DatasetDict.load_from_disk(
                     data_files=data_file, split=key, streaming=self.data_args.streaming
                 )
             else:
-                datasets = datasets.load_from_disk(
+                datasets = datasets.DatasetDict.load_from_disk(
                     data_files=data_file, split=key, num_proc=self.data_args.dataset_num_workers
                 ) 
             
