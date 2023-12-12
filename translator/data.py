@@ -2,7 +2,7 @@ import os
 import glob
 import logging
 
-from datasets import Dataset, load_dataset
+from datasets import Dataset, load_dataset, load_from_disk
 from transformers import DataCollatorForSeq2Seq
 
 
@@ -61,14 +61,13 @@ class Processor:
             # data_file = f"{data_path}/*.{extention}"
             data_file = data_path
             if self.data_args.streaming:
-                datasets = datasets.load_from_disk(
-                    data_path=data_file
+                datasets = load_from_disk(
+                    dataset_path=data_file
                 )[key]
             else:
-                datasets = datasets.load_from_disk(
-                    data_path=data_file
+                datasets = load_from_disk(
+                    dataset_path=data_file
                 )[key]
-            
             return datasets
 
         except:
@@ -105,8 +104,11 @@ class Processor:
         # labels
         labels = self.tokenize_fn(example['targets'], 
                                           length=self.data_args.max_len)
+        # print(labels)
         labels["input_ids"] = [
-            [(l if l != self.tokenizer.pad_token_id else -100) for l in label] for label in labels["input_ids"]
+            # [(l if l != self.tokenizer.pad_token_id else -100) for l in label] for label in labels["input_ids"]
+            (l if l != self.tokenizer.pad_token_id else -100) for l in labels["input_ids"]
+
         ]
 
         model_inputs["labels"] = labels["input_ids"]
