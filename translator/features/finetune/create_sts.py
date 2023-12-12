@@ -9,8 +9,8 @@ from .utils import *
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('--craw_finetune_path', default='data/craw/finetune', required=False)
-    parser.add_argument('--output_finetune_path', default='data/interim/finetune', required=False)
+    parser.add_argument('--craw_finetune_path', default='data/craw', required=False)
+    parser.add_argument('--output_finetune_path', default='data/finetune', required=False)
     args = parser.parse_args()
     
     # dataset PhoMT
