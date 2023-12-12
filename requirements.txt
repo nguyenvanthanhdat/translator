@@ -1,9 +1,9 @@
 gdown
 tqdm
-# torch
-# transformers
-# datasets
-# peft
-# bitsandbytes
-# einops
-# sentencepiece
+torch
+transformers
+datasets
+peft
+bitsandbytes
+einops
+sentencepiece
