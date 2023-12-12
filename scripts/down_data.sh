@@ -9,4 +9,4 @@ python -m  zipfile -e dataset_1000.zip data/craw/finetune/dataset_1000
 
 # rm PhoMT.zip
 # rm VietAI.zip
-rm dataset_1000
+rm dataset_1000.zip
