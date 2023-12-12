@@ -61,13 +61,13 @@ class Processor:
             # data_file = f"{data_path}/*.{extention}"
             data_file = data_path
             if self.data_args.streaming:
-                datasets = datasets.DatasetDict.load_from_disk(
-                    data_files=data_file, split=key, streaming=self.data_args.streaming
-                )
+                datasets = datasets.load_from_disk(
+                    data_files=data_file
+                )[key]
             else:
-                datasets = datasets.DatasetDict.load_from_disk(
-                    data_files=data_file, split=key, num_proc=self.data_args.dataset_num_workers
-                ) 
+                datasets = datasets.load_from_disk(
+                    data_files=data_file
+                )[key]
             
             return datasets
 
