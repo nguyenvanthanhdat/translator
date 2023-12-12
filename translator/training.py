@@ -146,7 +146,18 @@ def main():
     if lora_args.use_lora:
         assert not training_args.gradient_checkpointing, 'Can not use gradients_checkpointing with LoRA'
         
-        target_modules = [item for item in lora_args.target_modules.split(',')]
+        target_module_dict = {
+            "mT5": ['q', 'wi_1', 'k', 'wi_0', 'v', 'wo', 'o', 'lm_head'],
+            "T5": ['v', 'q', 'k', 'wi', 'wo', 'o', 'lm_head'],
+        }
+        
+        if ("mt5" or "flan-t5") in model_args.model_name_or_path:
+            target_modules = target_module_dict['mT5']
+        elif "t5" in model_args.model_name_or_path:
+            target_modules = target_module_dict['T5']
+
+
+        # target_modules = [item for item in lora_args.target_modules.split(',')]
         lora_config = LoraConfig(
             r=lora_args.lora_r,
             target_modules = target_modules,
