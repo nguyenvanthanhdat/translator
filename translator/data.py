@@ -61,18 +61,18 @@ class Processor:
             # data_file = f"{data_path}/*.{extention}"
             data_file = data_path
             if self.data_args.streaming:
-                datasets = load_dataset(
+                datasets = datasets.load_from_disk(
                     data_files=data_file, split=key, streaming=self.data_args.streaming
                 )
             else:
-                datasets = load_dataset(
+                datasets = datasets.load_from_disk(
                     data_files=data_file, split=key, num_proc=self.data_args.dataset_num_workers
                 ) 
             
             return datasets
 
         except:
-            logger.info(f'Error loading dataset {data_path} with {extention} extention')
+            logger.info(f'Error loading dataset {data_path}')
     
     def process_fn(self, datasets:Dataset) -> Dataset:
         """ Processing tokenizer 
