@@ -62,11 +62,11 @@ class Processor:
             data_file = data_path
             if self.data_args.streaming:
                 datasets = datasets.load_from_disk(
-                    data_files=data_file
+                    data_path=data_file
                 )[key]
             else:
                 datasets = datasets.load_from_disk(
-                    data_files=data_file
+                    data_path=data_file
                 )[key]
             
             return datasets
