@@ -5,7 +5,7 @@ gdown 1prTTLZX6AbGP2n3Epm0y4ujDBx7UNj13
 mkdir data
 # python -m zipfile -e PhoMT.zip data/craw
 # python -m zipfile -e VietAI.zip data/craw/VietAI
-python -m  zipfile -e dataset_1000.zip data/craw/finetune/dataset_1000
+python -m  zipfile -e dataset_1000.zip data/craw/finetune
 
 # rm PhoMT.zip
 # rm VietAI.zip

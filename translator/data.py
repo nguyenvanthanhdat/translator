@@ -134,13 +134,15 @@ class SBSProcessor(Processor):
         if self.data_args.streaming:
             datasets = datasets.map(
                 lambda example : self.group_fn(example),
-                remove_columns=['input_pred', 'label_pred', 'input_expl', 'label_expl'],
+                # lambda example : self.group_fn(example),
+                # remove_columns=['input_pred', 'label_pred', 'input_expl', 'label_expl'],
             )
         else:
             datasets = datasets.map(
                 lambda example : self.group_fn(example),
+                # lambda example : self.group_fn(example),
                 num_proc=self.data_args.dataset_num_workers,
-                remove_columns=['input_pred', 'label_pred', 'input_expl', 'label_expl'],
+                # remove_columns=['input_pred', 'label_pred', 'input_expl', 'label_expl'],
             )
         
         return datasets

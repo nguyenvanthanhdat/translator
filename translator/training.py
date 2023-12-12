@@ -177,12 +177,14 @@ def main():
         print_trainable_parameters(base_model)
         print('-' * 50, '\n')
 
-    processor_fn = SBSProcessor if model_args.step_by_step else Processor
+    # processor_fn = SBSProcessor if model_args.step_by_step else Processor
+    processor_fn = Processor
     processor = processor_fn(tokenizer, training_args.per_device_train_batch_size, data_args).__call__()
 
     # we want to ignore tokenizer pad token in the loss
     # Data collator
-    collator_fn = SBSDataCollator if model_args.step_by_step else DataCollatorForSeq2Seq
+    # collator_fn = SBSDataCollator if model_args.step_by_step else DataCollatorForSeq2Seq
+    collator_fn = DataCollatorForSeq2Seq
     data_collator = collator_fn(
         tokenizer,
         pad_to_multiple_of=8,
@@ -191,7 +193,8 @@ def main():
     )
 
     # Create Trainer instance
-    cls_trainer = SBSTrainer if model_args.step_by_step else Seq2SeqTrainer
+    # cls_trainer = SBSTrainer if model_args.step_by_step else Seq2SeqTrainer
+    cls_trainer = Seq2SeqTrainer
     trainer = cls_trainer(
         model=model,
         args=training_args,
