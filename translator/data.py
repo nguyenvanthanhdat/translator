@@ -21,6 +21,7 @@ class Processor:
         # train set
         if self.data_args.train_dir is not None:
             train_data = self.load_data(self.data_args.train_dir, 'train')
+            print(train_data)
             
             if self.data_args.max_train_samples is not None:
                 train_data = train_data.select(range(self.data_args.max_train_samples))
