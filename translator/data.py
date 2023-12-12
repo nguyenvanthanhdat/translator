@@ -29,7 +29,7 @@ class Processor:
             
         # validation set
         if self.data_args.valid_dir is not None:
-            valid_data = self.load_data(self.data_args.valid_dir, 'train')
+            valid_data = self.load_data(self.data_args.valid_dir, 'validation')
         
             if self.data_args.max_valid_samples is not None:
                 valid_data = valid_data.select(range(self.data_args.max_valid_samples))
@@ -55,17 +55,18 @@ class Processor:
         if not os.path.exists(data_path):
             raise ValueError(f'Not found {data_path} path.')
         
-        files = glob.glob(os.path.join(data_path, '*'))
-        extention = files[0].split('.')[-1]
+        # files = glob.glob(os.path.join(data_path, '*'))
+        # extention = files[0].split('.')[-1]
         try:
-            data_file = f"{data_path}/*.{extention}"
+            # data_file = f"{data_path}/*.{extention}"
+            data_file = data_path
             if self.data_args.streaming:
                 datasets = load_dataset(
-                    extention, data_files=data_file, split=key, streaming=self.data_args.streaming
+                    data_files=data_file, split=key, streaming=self.data_args.streaming
                 )
             else:
                 datasets = load_dataset(
-                    extention, data_files=data_file, split=key, num_proc=self.data_args.dataset_num_workers
+                    data_files=data_file, split=key, num_proc=self.data_args.dataset_num_workers
                 ) 
             
             return datasets
