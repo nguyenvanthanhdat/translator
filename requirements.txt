@@ -1,0 +1,9 @@
+gdown
+tqdm
+# torch
+# transformers
+# datasets
+# peft
+# bitsandbytes
+# einops
+# sentencepiece
