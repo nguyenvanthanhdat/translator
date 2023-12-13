@@ -150,11 +150,18 @@ def main():
             "mT5": ['q', 'wi_1', 'k', 'wi_0', 'v', 'wo', 'o', 'lm_head'],
             "T5": ['v', 'q', 'k', 'wi', 'wo', 'o', 'lm_head'],
         }
-        
-        if ("mt5" or "flan-t5") in model_args.model_name_or_path:
-            target_modules = target_module_dict['mT5']
-        elif "t5" in model_args.model_name_or_path:
-            target_modules = target_module_dict['T5']
+        target_att_dict = {
+            "T5": ['v', 'q', 'k', 'o'],
+        }
+
+        if lora_args.target_modules:
+            if lora_args.att_blocks:
+                target_modules = target_att_dict['T5']
+            else:
+                if ("mt5" or "flan-t5") in model_args.model_name_or_path:
+                    target_modules = target_module_dict['mT5']
+                elif "t5" in model_args.model_name_or_path:
+                    target_modules = target_module_dict['T5']
 
 
         # target_modules = [item for item in lora_args.target_modules.split(',')]
