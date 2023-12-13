@@ -61,14 +61,14 @@ class Processor:
             # data_file = f"{data_path}/*.{extention}"
             data_file = data_path
             if self.data_args.streaming:
-                datasets = load_from_disk(
+                dataset = load_from_disk(
                     dataset_path=data_file
                 )[key]
             else:
-                datasets = load_from_disk(
+                dataset = load_from_disk(
                     dataset_path=data_file
                 )[key]
-            return datasets
+            return dataset
 
         except:
             logger.info(f'Error loading dataset {data_path}')
@@ -123,68 +123,68 @@ class Processor:
         )
     
         
-class SBSProcessor(Processor):
-    def process_fn(self, datasets:Dataset) -> Dataset:
-        """ Processing tokenizer 
+# class SBSProcessor(Processor):
+#     def process_fn(self, datasets:Dataset) -> Dataset:
+#         """ Processing tokenizer 
 
-        Args:
-            datasets (Dataset): _description_
+#         Args:
+#             datasets (Dataset): _description_
 
-        Returns:
-            Dataset tokenized
-        """
+#         Returns:
+#             Dataset tokenized
+#         """
         
-        if self.data_args.streaming:
-            datasets = datasets.map(
-                lambda example : self.group_fn(example),
-                # lambda example : self.group_fn(example),
-                # remove_columns=['input_pred', 'label_pred', 'input_expl', 'label_expl'],
-            )
-        else:
-            datasets = datasets.map(
-                lambda example : self.group_fn(example),
-                # lambda example : self.group_fn(example),
-                num_proc=self.data_args.dataset_num_workers,
-                # remove_columns=['input_pred', 'label_pred', 'input_expl', 'label_expl'],
-            )
+#         if self.data_args.streaming:
+#             datasets = datasets.map(
+#                 lambda example : self.group_fn(example),
+#                 # lambda example : self.group_fn(example),
+#                 # remove_columns=['input_pred', 'label_pred', 'input_expl', 'label_expl'],
+#             )
+#         else:
+#             datasets = datasets.map(
+#                 lambda example : self.group_fn(example),
+#                 # lambda example : self.group_fn(example),
+#                 num_proc=self.data_args.dataset_num_workers,
+#                 # remove_columns=['input_pred', 'label_pred', 'input_expl', 'label_expl'],
+#             )
         
-        return datasets
+#         return datasets
     
-    def group_fn(self, example):
-        # question
-        model_inputs = self.tokenize_fn(example['input_pred'],length=self.data_args.max_len)
-        # answer
-        labels = self.tokenize_fn(example['label_pred'],length=self.data_args.max_len)
-        labels["input_ids"] = [
-            (l if l != self.tokenizer.pad_token_id else -100) for l in labels["input_ids"]
-        ]
-        model_inputs["labels"] = labels["input_ids"]
+#     def group_fn(self, example):
+#         # question
+#         model_inputs = self.tokenize_fn(example['input_pred'],length=self.data_args.max_len)
+#         # answer
+#         labels = self.tokenize_fn(example['label_pred'],length=self.data_args.max_len)
+#         labels["input_ids"] = [
+#             (l if l != self.tokenizer.pad_token_id else -100) for l in labels["input_ids"]
+#         ]
+#         model_inputs["labels"] = labels["input_ids"]
 
-        # CoT
-        cot_inputs = self.tokenize_fn(example['input_expl'],length=self.data_args.max_len)
-        # CoT label
-        cot_labels = self.tokenize_fn(example['label_expl'], length=self.data_args.max_len)
-        cot_labels["input_ids"] = [
-            (l if l != self.tokenizer.pad_token_id else -100) for l in cot_labels["input_ids"]
-        ]
-        cot_inputs['labels'] = cot_labels["input_ids"]
+#         # CoT
+#         cot_inputs = self.tokenize_fn(example['input_expl'],length=self.data_args.max_len)
+#         # CoT label
+#         cot_labels = self.tokenize_fn(example['label_expl'], length=self.data_args.max_len)
+#         cot_labels["input_ids"] = [
+#             (l if l != self.tokenizer.pad_token_id else -100) for l in cot_labels["input_ids"]
+#         ]
+#         cot_inputs['labels'] = cot_labels["input_ids"]
  
-        return {
-            'pred' : model_inputs,
-            'expl' : cot_inputs
-        }
+#         return {
+#             'pred' : model_inputs,
+#             'expl' : cot_inputs
+#         }
     
 
-class SBSDataCollator(DataCollatorForSeq2Seq):
-    def __call__(self, features, return_tensors=None):
+# class SBSDataCollator(DataCollatorForSeq2Seq):
+#     def __call__(self, features, return_tensors=None):
     
-        pred_features = [x['pred'] for x in features]
-        expl_features = [x['expl'] for x in features]
+#         pred_features = [x['pred'] for x in features]
+#         expl_features = [x['expl'] for x in features]
         
-        pred_inputs = super().__call__(pred_features, return_tensors)
-        expl_inputs = super().__call__(expl_features, return_tensors)
+#         pred_inputs = super().__call__(pred_features, return_tensors)
+#         expl_inputs = super().__call__(expl_features, return_tensors)
 
-        return {
-            'pred' : pred_inputs,
-            'expl' : expl_inputs
-        }
+#         return {
+#             'pred' : pred_inputs,
+#             'expl' : expl_inputs
+#         }
