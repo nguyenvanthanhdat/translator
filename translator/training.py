@@ -184,6 +184,8 @@ def main():
         print('-' * 50, '\n')
         print_trainable_parameters(base_model)
         print('-' * 50, '\n')
+    else:
+        model = prepare_model_for_int8_training(base_model)
 
     # processor_fn = SBSProcessor if model_args.step_by_step else Processor
     processor_fn = Processor
