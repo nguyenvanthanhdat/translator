@@ -228,7 +228,9 @@ def main():
     #                 # "gradient_clipping": 1.0,
     #             } 
     #     state.AcceleratorState().deepspeed_plugin.deepspeed_config_process(must_match=True, **kwargs)
-    model, train_collator, eval_collator =  accelerator.prepare(model, processor['train'], processor['validation'])
+    # model, train_collator, eval_collator =  accelerator.prepare(model, processor['train'], processor['validation'])
+    train_collator = processor['train']
+    valid_collator = processor['validation']
 
     # Create Trainer instance
     # cls_trainer = SBSTrainer if model_args.step_by_step else Seq2SeqTrainer
@@ -238,7 +240,7 @@ def main():
         args=training_args,
         data_collator=data_collator,
         train_dataset=train_collator,
-        eval_dataset=eval_collator
+        eval_dataset=valid_collator
     )
     if model_args.step_by_step:
         trainer.alpha = model_args.alpha
