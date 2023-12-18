@@ -72,6 +72,7 @@ class Processor:
 
         except:
             logger.info(f'Error loading dataset {data_path}')
+            print(f'Error loading dataset {data_path}')
     
     def process_fn(self, datasets:Dataset) -> Dataset:
         """ Processing tokenizer 
