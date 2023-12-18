@@ -17,7 +17,9 @@ from transformers import (
     AutoModelForSeq2SeqLM,
     AutoModelForCausalLM,
     BitsAndBytesConfig,
-    GenerationConfig
+    GenerationConfig,
+    MBartTokenizer,
+    MBartTokenizerFast
 )
 
 from peft import (
@@ -122,7 +124,7 @@ def main():
     tokenizer.padding_side = 'right'
     
     # Quantize config
-    if model_args.quantize:
+    if model_args.quantize and lora_args.use_lora:
         quant_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type='nf4',
@@ -142,6 +144,17 @@ def main():
         base_model.config.pretraining_tp = 1
     else:
         raise NotImplemented
+
+    # # Set decoder_start_token_id
+    # if base_model.config.decoder_start_token_id is None and isinstance(tokenizer, (MBartTokenizer, MBartTokenizerFast)):
+    #     if isinstance(tokenizer, MBartTokenizer):
+    #         base_model.config.decoder_start_token_id = tokenizer.lang_code_to_id[data_args.target_lang]
+    #     else:
+    #         # base_model.config.decoder_start_token_id = tokenizer.convert_tokens_to_ids(data_args.target_lang)
+    #         base_model.config.decoder_start_token_id = tokenizer.eos_token
+
+    if base_model.config.decoder_start_token_id is None:
+        raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
         
     ####################### Load your peft model #######################
     if lora_args.use_lora:
