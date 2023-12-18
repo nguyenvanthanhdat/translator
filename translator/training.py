@@ -224,7 +224,7 @@ def main():
                     # "scheduler.params.warmup_min_lr": 0.0,
                     # "scheduler.params.warmup_max_lr": 5e-5,
                     # "scheduler.params.warmup_num_steps": 0,
-                    "train_micro_batch_size_per_gpu": data_args.batch_size,
+                    "train_micro_batch_size_per_gpu": 4,
                     # "gradient_clipping": 1.0,
                 } 
         state.AcceleratorState().deepspeed_plugin.deepspeed_config_process(must_match=True, **kwargs)
