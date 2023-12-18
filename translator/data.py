@@ -35,7 +35,6 @@ class Processor:
                 valid_data = valid_data.select(range(self.data_args.max_valid_samples))
                 
             dataset['validation'] = self.process_fn(valid_data)
-        print(dataset)
         return dataset
     
     def load_data(self, data_path:str=None, key:str='train') -> Dataset:
@@ -68,6 +67,7 @@ class Processor:
                 dataset = load_from_disk(
                     dataset_path=data_file
                 )[key]
+            print(dataset)
             return dataset
 
         except:
