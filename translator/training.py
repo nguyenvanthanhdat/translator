@@ -2,7 +2,7 @@ import os
 import sys
 import torch
 import logging
-from accelerate import Accelerator, AcceleratorState
+from accelerate import Accelerator, state
 import transformers
 from transformers.trainer_utils import get_last_checkpoint
 from transformers import (
@@ -216,7 +216,7 @@ def main():
 
     # accelerate
     accelerator = Accelerator()
-    if AcceleratorState().deepspeed_plugin is not None:
+    if state.AcceleratorState().deepspeed_plugin is not None:
         kwargs = {
                     # "fp16.enabled": True,
                     # "optimizer.params.lr": 5e-5,
@@ -227,7 +227,7 @@ def main():
                     "train_micro_batch_size_per_gpu": data_args.batch_size,
                     # "gradient_clipping": 1.0,
                 } 
-        AcceleratorState().deepspeed_plugin.deepspeed_config_process(must_match=True, **kwargs)
+        state.AcceleratorState().deepspeed_plugin.deepspeed_config_process(must_match=True, **kwargs)
     model, train_collator, eval_collator =  accelerator.prepare(model, processor['train'], processor['validation'])
 
     # Create Trainer instance
