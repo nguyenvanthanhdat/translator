@@ -17,7 +17,7 @@ class Processor:
         self.data_args = data_args
         
     def __call__(self):
-        datasets = {}
+        dataset = {}
         # train set
         if self.data_args.train_dir is not None:
             train_data = self.load_data(self.data_args.train_dir, 'train')
@@ -25,7 +25,7 @@ class Processor:
             if self.data_args.max_train_samples is not None:
                 train_data = train_data.select(range(self.data_args.max_train_samples))
             
-            datasets['train'] = self.process_fn(train_data)
+            dataset['train'] = self.process_fn(train_data)
             
         # validation set
         if self.data_args.valid_dir is not None:
@@ -34,9 +34,9 @@ class Processor:
             if self.data_args.max_valid_samples is not None:
                 valid_data = valid_data.select(range(self.data_args.max_valid_samples))
                 
-            datasets['validation'] = self.process_fn(valid_data)
+            dataset['validation'] = self.process_fn(valid_data)
         
-        return datasets
+        return dataset
     
     def load_data(self, data_path:str=None, key:str='train') -> Dataset:
         """ Load datasets function 
