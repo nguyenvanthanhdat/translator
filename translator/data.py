@@ -59,6 +59,7 @@ class Processor:
         try:
             # data_file = f"{data_path}/*.{extention}"
             data_file = data_path
+            print(data_path)
             if self.data_args.streaming:
                 dataset = load_from_disk(
                     dataset_path=data_file
@@ -67,7 +68,6 @@ class Processor:
                 dataset = load_from_disk(
                     dataset_path=data_file
                 )[key]
-            print(dataset)
             return dataset
 
         except:
