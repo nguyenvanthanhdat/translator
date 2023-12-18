@@ -6,7 +6,7 @@ deepspeed_config:
  zero3_init_flag: false
  zero_stage: 1
  gradient_accumulation_steps: 1
- train_micro_batch_size_per_gpu: auto
+ train_micro_batch_size_per_gpu: 2
 distributed_type: DEEPSPEED
 fsdp_config: {}
 machine_rank: 0
