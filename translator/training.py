@@ -2,7 +2,7 @@ import os
 import sys
 import torch
 import logging
-
+import accelerate
 import transformers
 from transformers.trainer_utils import get_last_checkpoint
 from transformers import (
@@ -214,6 +214,8 @@ def main():
         padding=True
     )
 
+    model, train_collator, eval_collator =  accelerate.Accelerator.prepare(model, processor['train'], processor['validation'])
+
     # Create Trainer instance
     # cls_trainer = SBSTrainer if model_args.step_by_step else Seq2SeqTrainer
     cls_trainer = Seq2SeqTrainer
@@ -221,8 +223,8 @@ def main():
         model=model,
         args=training_args,
         data_collator=data_collator,
-        train_dataset=processor["train"],
-        eval_dataset=processor["validation"]
+        train_dataset=train_collator,
+        eval_dataset=eval_collator
     )
     if model_args.step_by_step:
         trainer.alpha = model_args.alpha
