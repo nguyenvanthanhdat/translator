@@ -30,7 +30,7 @@ class Processor:
             train_data = load_dataset(
                 self.data_args.dataset_name_train,
                 split = 'train',
-                streming = self.data_args.streaming
+                streaming = self.data_args.streaming
             )
             
         # validation set
@@ -45,7 +45,7 @@ class Processor:
             train_data = load_dataset(
                 self.data_args.dataset_name_validation,
                 split = 'validation',
-                streming = self.data_args.streaming
+                streaming = self.data_args.streaming
             )
         
         return dataset
