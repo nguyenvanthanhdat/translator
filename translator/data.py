@@ -32,6 +32,7 @@ class Processor:
                 split = 'train',
                 streaming = self.data_args.streaming
             )
+            dataset['train'] = self.process_fn(train_data)
             
         # validation set
         if self.data_args.valid_dir is not None:
@@ -42,11 +43,12 @@ class Processor:
                 
             dataset['validation'] = self.process_fn(valid_data)
         elif self.data_args.dataset_name_validation is not None:
-            train_data = load_dataset(
+            valid_data = load_dataset(
                 self.data_args.dataset_name_validation,
                 split = 'validation',
                 streaming = self.data_args.streaming
             )
+            dataset['validation'] = self.process_fn(valid_data)
         
         return dataset
     
