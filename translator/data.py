@@ -26,6 +26,7 @@ class Processor:
                 train_data = train_data.select(range(self.data_args.max_train_samples))
             
             dataset['train'] = self.process_fn(train_data)
+        # load from hf
         elif self.data_args.dataset_name_train is not None:
             train_data = load_dataset(
                 self.data_args.dataset_name_train,
@@ -33,7 +34,7 @@ class Processor:
                 streaming = self.data_args.streaming
             )
             if self.data_args.max_train_samples is not None:
-                train_data = train_data.select(range(self.data_args.max_train_samples))
+                train_data = train_data.take(range(self.data_args.max_train_samples))
             dataset['train'] = self.process_fn(train_data)
             
         # validation set
@@ -44,6 +45,7 @@ class Processor:
                 valid_data = valid_data.select(range(self.data_args.max_valid_samples))
                 
             dataset['validation'] = self.process_fn(valid_data)
+        # load from hf
         elif self.data_args.dataset_name_validation is not None:
             valid_data = load_dataset(
                 self.data_args.dataset_name_validation,
@@ -51,7 +53,7 @@ class Processor:
                 streaming = self.data_args.streaming
             )
             if self.data_args.max_valid_samples is not None:
-                valid_data = valid_data.select(range(self.data_args.max_valid_samples))
+                valid_data = valid_data.take(range(self.data_args.max_valid_samples))
             dataset['validation'] = self.process_fn(valid_data)
         
         return dataset
