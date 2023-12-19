@@ -215,21 +215,6 @@ def main():
         padding=True
     )
 
-    # accelerate
-    # accelerator = Accelerator()
-    # if state.AcceleratorState().deepspeed_plugin is not None:
-    #     kwargs = {
-    #                 # "fp16.enabled": True,
-    #                 # "optimizer.params.lr": 5e-5,
-    #                 # "optimizer.params.weight_decay": 0.0,
-    #                 # "scheduler.params.warmup_min_lr": 0.0,
-    #                 # "scheduler.params.warmup_max_lr": 5e-5,
-    #                 # "scheduler.params.warmup_num_steps": 0,
-    #                 "train_micro_batch_size_per_gpu": 4,
-    #                 # "gradient_clipping": 1.0,
-    #             } 
-    #     state.AcceleratorState().deepspeed_plugin.deepspeed_config_process(must_match=True, **kwargs)
-    # model, train_collator, valid_collator =  accelerator.prepare(model, processor['train'], processor['validation'])
     train_collator = processor['train']
     valid_collator = processor['validation']
 
