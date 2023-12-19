@@ -146,14 +146,6 @@ def main():
     else:
         raise NotImplemented
 
-    # # Set decoder_start_token_id
-    # if base_model.config.decoder_start_token_id is None and isinstance(tokenizer, (MBartTokenizer, MBartTokenizerFast)):
-    #     if isinstance(tokenizer, MBartTokenizer):
-    #         base_model.config.decoder_start_token_id = tokenizer.lang_code_to_id[data_args.target_lang]
-    #     else:
-    #         # base_model.config.decoder_start_token_id = tokenizer.convert_tokens_to_ids(data_args.target_lang)
-    #         base_model.config.decoder_start_token_id = tokenizer.eos_token
-
     if base_model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
         
@@ -215,13 +207,6 @@ def main():
         padding=True
     )
 
-    # train_collator = processor['train']
-    # valid_collator = processor['train']
-    # print(train_collator)
-    # print(train_collator[0])
-
-    # Create Trainer instance
-    # cls_trainer = SBSTrainer if model_args.step_by_step else Seq2SeqTrainer
     cls_trainer = Seq2SeqTrainer
     trainer = cls_trainer(
         model=model,
