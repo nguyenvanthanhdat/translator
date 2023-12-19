@@ -21,8 +21,8 @@ def is_filter_samples(input_str, filter_length=256) -> bool:
     return False
 
 def a_2_b(examples, language_a, language_b):
-    examples['inputs'] = [f'{language_a}: {sample[:-1]}' for sample in examples[language_a]]
-    examples['targets'] = [f'{language_b}: {sample[:-1]}' for sample in examples[language_b]]
+    examples['inputs'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
+    examples['targets'] = [f'{language_b}: {sample}' for sample in examples[language_b]]
     return examples
 
 def multi_trans(dataset, language_a, language_b):
