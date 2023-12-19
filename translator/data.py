@@ -41,7 +41,7 @@ class Processor:
                 valid_data = valid_data.select(range(self.data_args.max_valid_samples))
                 
             dataset['validation'] = self.process_fn(valid_data)
-        elif self.data_args.dataset_name is not None:
+        elif self.data_args.dataset_name_validation is not None:
             train_data = load_dataset(
                 self.data_args.dataset_name_validation,
                 split = 'validation',
