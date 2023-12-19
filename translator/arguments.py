@@ -109,7 +109,7 @@ class ModelArguments:
         }
     )
     
-    ouput_dir: str = field(
+    output_dir: str = field(
         default="outputs",
         metadata={
             "help": (
