@@ -100,7 +100,7 @@ class Processor:
             logger.info(f'Error loading dataset {data_path}')
             print(f'Error loading dataset {data_path}')
     
-    def process_fn(self, datasets:Dataset) -> Dataset:
+    def process_fn(self, dataset:Dataset) -> Dataset:
         """ Processing tokenizer 
 
         Args:
@@ -111,18 +111,18 @@ class Processor:
         """
         
         if self.data_args.streaming:
-            datasets = datasets.map(
+            dataset = dataset.map(
                 lambda example : self.group_fn(example),
                 remove_columns=['inputs', 'targets'],
             )
         else:
-            datasets = datasets.map(
+            dataset = dataset.map(
                 lambda example : self.group_fn(example),
                 num_proc=self.data_args.dataset_num_workers,
                 remove_columns=['inputs', 'targets'],
             )
         
-        return datasets
+        return dataset
     
     def group_fn(self, example):
         # inputs
