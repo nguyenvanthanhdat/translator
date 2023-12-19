@@ -32,6 +32,8 @@ class Processor:
                 split = 'train',
                 streaming = self.data_args.streaming
             )
+            if self.data_args.max_train_samples is not None:
+                train_data = train_data.select(range(self.data_args.max_train_samples))
             dataset['train'] = self.process_fn(train_data)
             
         # validation set
@@ -48,6 +50,8 @@ class Processor:
                 split = 'validation',
                 streaming = self.data_args.streaming
             )
+            if self.data_args.max_valid_samples is not None:
+                valid_data = valid_data.select(range(self.data_args.max_valid_samples))
             dataset['validation'] = self.process_fn(valid_data)
         
         return dataset
