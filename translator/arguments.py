@@ -109,15 +109,6 @@ class ModelArguments:
         }
     )
     
-    outputs_dir: str = field(
-        default="outputs",
-        metadata={
-            "help": (
-                "The directory save model"
-            )
-        }
-    )
-    
 
     def __post_init__(self):
         if self.config_overrides is not None and (self.config_name is not None or self.model_name_or_path is not None):

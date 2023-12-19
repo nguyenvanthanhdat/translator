@@ -225,7 +225,7 @@ def main():
     trainer.train()
 
     # Save Model
-    trainer.model.save_pretrained(model_args.output_dir)
+    trainer.model.save_pretrained(training_args.output_dir)
     
 
 def _mp_fn(index):
