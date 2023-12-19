@@ -228,9 +228,9 @@ def main():
     #                 # "gradient_clipping": 1.0,
     #             } 
     #     state.AcceleratorState().deepspeed_plugin.deepspeed_config_process(must_match=True, **kwargs)
-    model, train_collator, valid_collator =  accelerator.prepare(model, processor['train'], processor['validation'])
-    # train_collator = processor['train']
-    # valid_collator = processor['validation']
+    # model, train_collator, valid_collator =  accelerator.prepare(model, processor['train'], processor['validation'])
+    train_collator = processor['train']
+    valid_collator = processor['validation']
 
     # Create Trainer instance
     # cls_trainer = SBSTrainer if model_args.step_by_step else Seq2SeqTrainer
@@ -242,9 +242,9 @@ def main():
         train_dataset=train_collator,
         eval_dataset=valid_collator
     )
-    if model_args.step_by_step:
-        trainer.alpha = model_args.alpha
-        trainer.output_expl = model_args.explanation_outputs
+    # if model_args.step_by_step:
+    #     trainer.alpha = model_args.alpha
+    #     trainer.output_expl = model_args.explanation_outputs
         
     model.config.use_cache = False  # silence the warnings. Please re-enable for inference!
     
