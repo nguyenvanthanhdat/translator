@@ -132,7 +132,8 @@ def main():
             bnb_4bit_use_double_quant=False
         )
     
-    cls = AutoModelForSeq2SeqLM if 'mt' in model_args.model_name_or_path else AutoModelForCausalLM
+    # cls = AutoModelForSeq2SeqLM if 'mt' in model_args.model_name_or_path else AutoModelForCausalLM
+    cls = AutoModelForSeq2SeqLM
 
     if model_args.model_name_or_path:
         base_model = cls.from_pretrained(
@@ -215,7 +216,7 @@ def main():
     )
 
     # accelerate
-    accelerator = Accelerator()
+    # accelerator = Accelerator()
     # if state.AcceleratorState().deepspeed_plugin is not None:
     #     kwargs = {
     #                 # "fp16.enabled": True,
