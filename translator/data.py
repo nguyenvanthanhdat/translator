@@ -4,6 +4,7 @@ import logging
 
 from datasets import Dataset, load_dataset, load_from_disk
 from transformers import DataCollatorForSeq2Seq
+from translator.features.finetune.utils import multi_trans
 
 
 logger = logging.getLogger(__name__)
@@ -36,6 +37,7 @@ class Processor:
             if self.data_args.max_train_samples is not None:
                 train_data = list(train_data.take(self.data_args.max_train_samples))
                 train_data = Dataset.from_list(train_data)
+                train_data = multi_trans(train_data, "en", "vi")
             dataset['train'] = self.process_fn(train_data)
             
         # validation set
@@ -56,6 +58,7 @@ class Processor:
             if self.data_args.max_valid_samples is not None:
                 valid_data = list(valid_data.take(self.data_args.max_valid_samples))
                 valid_data = Dataset.from_list(valid_data)
+                valid_data = multi_trans(valid_data, "en", "vi")
             dataset['validation'] = self.process_fn(valid_data)
         
         return dataset
