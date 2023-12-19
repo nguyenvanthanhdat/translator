@@ -217,6 +217,8 @@ def main():
 
     train_collator = processor['train']
     valid_collator = processor['validation']
+    print(train_collator)
+    print(train_collator[0])
 
     # Create Trainer instance
     # cls_trainer = SBSTrainer if model_args.step_by_step else Seq2SeqTrainer
