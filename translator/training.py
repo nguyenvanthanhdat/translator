@@ -225,7 +225,7 @@ def main():
     trainer.train()
 
     # Save Model
-    trainer.model.save_pretrained(lora_args.save_base)
+    trainer.model.save_pretrained(model_args.output_dir)
     
 
 def _mp_fn(index):

@@ -109,6 +109,14 @@ class ModelArguments:
         }
     )
     
+    ouput_dir: str = field(
+        default="outputs",
+        metadata={
+            "help": (
+                "The directory save model"
+            )
+        }
+    )
     
 
     def __post_init__(self):
