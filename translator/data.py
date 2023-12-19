@@ -59,6 +59,7 @@ class Processor:
                 valid_data = list(valid_data.take(self.data_args.max_valid_samples))
                 valid_data = Dataset.from_list(valid_data)
                 valid_data = multi_trans(valid_data, "en", "vi")
+                print(valid_data)
             dataset['validation'] = self.process_fn(valid_data)
         
         return dataset
