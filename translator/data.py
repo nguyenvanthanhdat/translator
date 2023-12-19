@@ -26,7 +26,7 @@ class Processor:
                 train_data = train_data.select(range(self.data_args.max_train_samples))
             
             dataset['train'] = self.process_fn(train_data)
-        elif self.data_args.dataset_name is not None:
+        elif self.data_args.dataset_name_train is not None:
             train_data = load_dataset(
                 self.data_args.dataset_name_train,
                 split = 'train',
