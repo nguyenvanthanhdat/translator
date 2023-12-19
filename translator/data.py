@@ -34,7 +34,7 @@ class Processor:
                 streaming = self.data_args.streaming
             )
             if self.data_args.max_train_samples is not None:
-                train_data = list(train_data.take(range(self.data_args.max_train_samples)))
+                train_data = list(train_data.take(self.data_args.max_train_samples))
                 train_data = Dataset.from_list(train_data)
             dataset['train'] = self.process_fn(train_data)
             
@@ -54,7 +54,7 @@ class Processor:
                 streaming = self.data_args.streaming
             )
             if self.data_args.max_valid_samples is not None:
-                valid_data = list(valid_data.take(range(self.data_args.max_valid_samples)))
+                valid_data = list(valid_data.take(self.data_args.max_valid_samples))
                 valid_data = Dataset.from_list(valid_data)
             dataset['validation'] = self.process_fn(valid_data)
         
