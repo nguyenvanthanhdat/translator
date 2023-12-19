@@ -103,7 +103,7 @@ class Processor:
                                         length=self.data_args.max_len)
         # labels
         labels = self.tokenize_fn(example['targets'], 
-                                          length=self.data_args.max_len)
+                                          length=self.data_args.max_len, target=True)
         # print(labels)
         labels["input_ids"] = [
             # [(l if l != self.tokenizer.pad_token_id else -100) for l in label] for label in labels["input_ids"]
@@ -115,12 +115,19 @@ class Processor:
 
         return model_inputs
     
-    def tokenize_fn(self, x:str=None, length:int=None, padding=True):
-        return self.tokenizer(
-          x,
-          max_length=None if length is None else length,
-          padding=padding, truncation=True 
-        )
+    def tokenize_fn(self, x:str=None, length:int=None, padding=True, target=False):
+        if target == False:
+            return self.tokenizer(
+                x,
+                max_length=None if length is None else length,
+                padding=padding, truncation=True 
+            )
+        else:
+            return self.tokenizer(
+                text_target=x,
+                max_length=None if length is None else length,
+                padding=padding, truncation=True 
+            )
     
         
 # class SBSProcessor(Processor):
