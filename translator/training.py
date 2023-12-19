@@ -215,10 +215,10 @@ def main():
         padding=True
     )
 
-    train_collator = processor['train']
-    valid_collator = processor['validation']
-    print(train_collator)
-    print(train_collator[0])
+    # train_collator = processor['train']
+    # valid_collator = processor['train']
+    # print(train_collator)
+    # print(train_collator[0])
 
     # Create Trainer instance
     # cls_trainer = SBSTrainer if model_args.step_by_step else Seq2SeqTrainer
@@ -227,8 +227,8 @@ def main():
         model=model,
         args=training_args,
         data_collator=data_collator,
-        train_dataset=train_collator,
-        eval_dataset=valid_collator
+        train_dataset=processor['train'],
+        eval_dataset=processor['validation'],
     )
     # if model_args.step_by_step:
     #     trainer.alpha = model_args.alpha
