@@ -139,8 +139,6 @@ def main():
     if model_args.model_name_or_path:
         base_model = cls.from_pretrained(
             model_args.model_name_or_path,
-            # quantization_config=quant_config if model_args.quantize else None,
-            # device_map={"": 0}
         )
         base_model.config.use_cache = False
         base_model.config.pretraining_tp = 1
