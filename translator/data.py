@@ -21,19 +21,20 @@ class Processor:
     def __call__(self):
         dataset = {}
         # train set
-        if self.data_args.train_dir is not None and self.data_args.data_name is None:
-            train_data = self.load_data(self.data_args.train_dir, 'train')
+        # if self.data_args.train_dir is not None and self.data_args.data_name is None:
+        #     train_data = self.load_from_disk(self.data_args.train_dir, split='train')
             
-            if self.data_args.max_train_samples is not None:
-                train_data = train_data.select(range(self.data_args.max_train_samples))
+        #     if self.data_args.max_train_samples is not None:
+        #         train_data = train_data.select(range(self.data_args.max_train_samples))
             
-            dataset['train'] = self.process_fn(train_data)
+        #     dataset['train'] = self.process_fn(train_data)
         # load from hf
-        elif self.data_args.dataset_name_train is not None:
+        if self.data_args.dataset_name_train is not None:
             train_data = load_dataset(
                 self.data_args.dataset_name_train,
                 split = 'train',
-                streaming = self.data_args.streaming
+                streaming = self.data_args.streaming,
+                token = self.data_args.hf_key
             )
             if self.data_args.max_train_samples is not None:
                 train_data = list(train_data.take(self.data_args.max_train_samples))
@@ -55,58 +56,63 @@ class Processor:
                 train_data = interleave_datasets([en_2_vi, vi_2_en], seed=self.seed)
                 train_data = train_data.shuffle(seed=self.seed, buffer_size=10_000)
             dataset['train'] = self.process_fn(train_data)
+        else:
+            raise Exception(f'Not found `dataset_name_train` path.')
             
         # validation set
-        if self.data_args.valid_dir is not None:
-            valid_data = self.load_data(self.data_args.valid_dir, 'validation')
+        # if self.data_args.valid_dir is not None:
+        #     valid_data = self.load_data(self.data_args.valid_dir, 'validation')
         
-            if self.data_args.max_valid_samples is not None:
-                valid_data = valid_data.select(range(self.data_args.max_valid_samples))
+        #     if self.data_args.max_valid_samples is not None:
+        #         valid_data = valid_data.select(range(self.data_args.max_valid_samples))
                 
-            dataset['validation'] = self.process_fn(valid_data)
+        #     dataset['validation'] = self.process_fn(valid_data)
         # load from hf
-        elif self.data_args.dataset_name_validation is not None:
+        if self.data_args.dataset_name_validation is not None:
             valid_data = load_dataset(
                 self.data_args.dataset_name_validation,
                 split = 'validation',
+                token = self.data_args.hf_key,
             )
             valid_data = multi_trans(valid_data, "en", "vi")
             dataset['validation'] = self.process_fn(valid_data)
+        else:
+            raise Exception(f'Not found `dataset_name_validation` path.')
         
         return dataset
     
-    def load_data(self, data_path:str=None, key:str='train') -> Dataset:
-        """ Load datasets function 
+    # def load_data(self, data_path:str=None, key:str='train') -> Dataset:
+    #     """ Load datasets function 
 
-        Args:
-            data_path (str, optional): folder contain list of input files name. Defaults to None.
-            key (str, optional): help dataloader know is train file or test file. 
-                                Input file can be train/validation/test. Defaults to 'train'.
+    #     Args:
+    #         data_path (str, optional): folder contain list of input files name. Defaults to None.
+    #         key (str, optional): help dataloader know is train file or test file. 
+    #                             Input file can be train/validation/test. Defaults to 'train'.
 
-        Raises:
-            Exception: _description_
+    #     Raises:
+    #         Exception: _description_
 
-        Returns:
-            Datasets
-        """
-        if not os.path.exists(data_path):
-            raise ValueError(f'Not found {data_path} path.')
+    #     Returns:
+    #         Datasets
+    #     """
+    #     if not os.path.exists(data_path):
+    #         raise ValueError(f'Not found {data_path} path.')
         
-        try:
-            data_file = data_path
-            if self.data_args.streaming:
-                dataset = load_from_disk(
-                    dataset_path=data_file
-                )[key]
-            else:
-                dataset = load_from_disk(
-                    dataset_path=data_file
-                )[key]
-            return dataset
+    #     try:
+    #         data_file = data_path
+    #         if self.data_args.streaming:
+    #             dataset = load_from_disk(
+    #                 dataset_path=data_file
+    #             )[key]
+    #         else:
+    #             dataset = load_from_disk(
+    #                 dataset_path=data_file
+    #             )[key]
+    #         return dataset
 
-        except:
-            logger.info(f'Error loading dataset {data_path}')
-            print(f'Error loading dataset {data_path}')
+    #     except:
+    #         logger.info(f'Error loading dataset {data_path}')
+    #         print(f'Error loading dataset {data_path}')
     
     def process_fn(self, dataset:Dataset) -> Dataset:
         """ Processing tokenizer 
