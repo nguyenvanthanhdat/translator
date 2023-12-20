@@ -82,32 +82,32 @@ class ModelArguments:
         }
     )
     
-    step_by_step:bool = field(
-        default=False,
-        metadata={
-            "help" : (
-                "Finetune model with dual loss. 1. Prediction loss, 2. Step by step loss"
-            )
-        }
-    )
+    # step_by_step:bool = field(
+    #     default=False,
+    #     metadata={
+    #         "help" : (
+    #             "Finetune model with dual loss. 1. Prediction loss, 2. Step by step loss"
+    #         )
+    #     }
+    # )
     
-    alpha:float = field(
-        default=0.1,
-        metadata={
-            "help" : (
-                "Lambda bias loss function use for balance loss"
-            )
-        }
-    )
+    # alpha:float = field(
+    #     default=0.1,
+    #     metadata={
+    #         "help" : (
+    #             "Lambda bias loss function use for balance loss"
+    #         )
+    #     }
+    # )
     
-    explanation_outputs:bool = field(
-        default=True,
-        metadata={
-            "help" : (
-                "Use explaination in prediction steps"
-            )
-        }
-    )
+    # explanation_outputs:bool = field(
+    #     default=True,
+    #     metadata={
+    #         "help" : (
+    #             "Use explaination in prediction steps"
+    #         )
+    #     }
+    # )
     
 
     def __post_init__(self):
@@ -136,11 +136,11 @@ class DataTrainingArguments:
     dataset_config_name: Optional[str] = field(
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
     )
-    train_dir: Optional[str] = field(default=None, metadata={"help": "The input training data file (a text file)."})
-    valid_dir: Optional[str] = field(
-        default=None,
-        metadata={"help": "An optional input evaluation data file to evaluate the perplexity on (a text file)."},
-    )
+    # train_dir: Optional[str] = field(default=None, metadata={"help": "The input training data file (a text file)."})
+    # valid_dir: Optional[str] = field(
+    #     default=None,
+    #     metadata={"help": "An optional input evaluation data file to evaluate the perplexity on (a text file)."},
+    # )
     overwrite_cache: bool = field(
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
