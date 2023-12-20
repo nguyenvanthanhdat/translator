@@ -209,6 +209,7 @@ def main():
             model=model,
             label_pad_token_id=-100,
             pad_to_multiple_of=8 if training_args.fp16 else None,
+            max_length=data_args.max_len
         )
 
     cls_trainer = Seq2SeqTrainer
