@@ -19,7 +19,8 @@ from transformers import (
     BitsAndBytesConfig,
     GenerationConfig,
     MBartTokenizer,
-    MBartTokenizerFast
+    MBartTokenizerFast,
+    default_data_collator
 )
 
 from peft import (
@@ -200,12 +201,15 @@ def main():
     # Data collator
     # collator_fn = SBSDataCollator if model_args.step_by_step else DataCollatorForSeq2Seq
     collator_fn = DataCollatorForSeq2Seq
-    data_collator = collator_fn(
-        tokenizer,
-        pad_to_multiple_of=8,
-        return_tensors="pt", 
-        padding=True
-    )
+    if data_args.pad_to_max_length:
+        data_collator = default_data_collator
+    else:
+        data_collator = DataCollatorForSeq2Seq(
+            tokenizer,
+            model=model,
+            label_pad_token_id=-100,
+            pad_to_multiple_of=8 if training_args.fp16 else None,
+        )
 
     cls_trainer = Seq2SeqTrainer
     trainer = cls_trainer(
