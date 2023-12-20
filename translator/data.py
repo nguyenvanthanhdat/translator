@@ -4,7 +4,7 @@ import logging
 
 from datasets import Dataset, load_dataset, load_from_disk, interleave_datasets
 from transformers import DataCollatorForSeq2Seq
-from translator.features.finetune.utils import multi_trans_steaming, multi_trans, a_2_b
+from translator.features import multi_trans_steaming, multi_trans, a_2_b
 
 
 logger = logging.getLogger(__name__)
