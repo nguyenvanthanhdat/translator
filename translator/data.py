@@ -157,7 +157,8 @@ class Processor:
             )
         else:
             return self.tokenizer(
-                text_target=x,
+                # text_target=x,
+                x,
                 max_length=None if length is None else length,
                 padding=padding, truncation=True 
             )
