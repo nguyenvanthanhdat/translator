@@ -198,6 +198,10 @@ class DataTrainingArguments:
             )
         },
     )
+    hf_key: str = field(
+        default=None,
+        metadata={"help": "The key huggingface for load dataset and model"}
+    )
 
     def __post_init__(self):
         if self.streaming:
