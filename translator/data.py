@@ -92,10 +92,7 @@ class Processor:
         if not os.path.exists(data_path):
             raise ValueError(f'Not found {data_path} path.')
         
-        # files = glob.glob(os.path.join(data_path, '*'))
-        # extention = files[0].split('.')[-1]
         try:
-            # data_file = f"{data_path}/*.{extention}"
             data_file = data_path
             if self.data_args.streaming:
                 dataset = load_from_disk(
