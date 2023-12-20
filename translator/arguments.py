@@ -181,12 +181,6 @@ class DataTrainingArguments:
             )
         },
     )
-    # train_path_list: Optional[str] = field(default=None,
-    #                                        metadata={"help": "The input training data file (a text file)."})
-    # validation_path_list: Optional[str] = field(
-    #     default=None,
-    #     metadata={"help": "An optional input evaluation data file to evaluate the perplexity on (a text file)."},
-    # )
     streaming: bool = field(default=False, metadata={"help": "Enable streaming mode"})
     pad_to_max_length: bool = field(
         default=False,
