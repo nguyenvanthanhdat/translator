@@ -220,9 +220,6 @@ def main():
         train_dataset=processor['train'],
         eval_dataset=processor['validation'],
     )
-    # if model_args.step_by_step:
-    #     trainer.alpha = model_args.alpha
-    #     trainer.output_expl = model_args.explanation_outputs
         
     model.config.use_cache = False  # silence the warnings. Please re-enable for inference!
     
