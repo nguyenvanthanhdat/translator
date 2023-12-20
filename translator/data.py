@@ -69,7 +69,6 @@ class Processor:
             valid_data = load_dataset(
                 self.data_args.dataset_name_validation,
                 split = 'validation',
-                # streaming = self.data_args.streaming
             )
             valid_data = multi_trans(valid_data, "en", "vi")
             dataset['validation'] = self.process_fn(valid_data)
