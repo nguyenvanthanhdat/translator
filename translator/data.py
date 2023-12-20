@@ -59,6 +59,8 @@ class Processor:
                 split = 'validation',
                 token = self.data_args.hf_key,
             )
+            if self.data_args.max_valid_samples is not None:
+                valid_data = valid_data.select(range(self.data_args.max_valid_samples))
             valid_data = multi_trans(valid_data, "en", "vi")
             dataset['validation'] = self.process_fn(valid_data)
         else:
