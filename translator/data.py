@@ -42,7 +42,8 @@ class Processor:
                 train_data = train_data.map(
                     multi_trans_steaming,
                     fn_kwargs={"language_a": "en", "language_b": "en"},
-                    batched=True
+                    batched=True,
+                    remove_columns=['en', 'vi']
                 )
             dataset['train'] = self.process_fn(train_data)
             
