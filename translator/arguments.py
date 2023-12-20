@@ -221,7 +221,7 @@ class LoraArguments:
     )
     lora_r: Optional[int] = field(default=8, metadata={"help": "Lora attention dimension."})
     lora_alpha: Optional[int] = field(default=16, metadata={"help": "The alpha parameter for Lora scaling."})
-    target_modules: bool = field(default=True, metadata={"help": "Using lora to specific module"})
+    linear_layer: bool = field(default=True, metadata={"help": "Using lora to specific module"})
     att_blocks: bool = field(default=False, metadata={"help": "To lora linear layer in attention block"})
     lora_dropout: Optional[float] = field(default=0.0, metadata={"help": "The dropout probability for Lora layers."})
     use_int8_training: bool = field(default=False, metadata={"help": "Using int8 training"})

@@ -162,7 +162,7 @@ def main():
             "T5": ['v', 'q', 'k', 'o'],
         }
 
-        if lora_args.target_modules:
+        if lora_args.linear_layer:
             if lora_args.att_blocks:
                 target_modules = target_att_dict['T5']
             else:
