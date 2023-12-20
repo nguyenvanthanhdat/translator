@@ -196,7 +196,7 @@ def main():
 
     # processor_fn = SBSProcessor if model_args.step_by_step else Processor
     processor_fn = Processor
-    processor = processor_fn(tokenizer, training_args.per_device_train_batch_size, data_args).__call__()
+    processor = processor_fn(tokenizer, training_args.per_device_train_batch_size, data_args, training_args.seed).__call__()
     # we want to ignore tokenizer pad token in the loss
     # Data collator
     # collator_fn = SBSDataCollator if model_args.step_by_step else DataCollatorForSeq2Seq

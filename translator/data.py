@@ -2,9 +2,9 @@ import os
 import glob
 import logging
 
-from datasets import Dataset, load_dataset, load_from_disk
+from datasets import Dataset, load_dataset, load_from_disk, interleave_datasets
 from transformers import DataCollatorForSeq2Seq
-from translator.features.finetune.utils import multi_trans_steaming, multi_trans
+from translator.features.finetune.utils import multi_trans_steaming, multi_trans, a_2_b
 
 
 logger = logging.getLogger(__name__)
@@ -12,10 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class Processor:
-    def __init__(self, tokenizer, batch_size, data_args) -> None:
+    def __init__(self, tokenizer, batch_size, data_args, seed) -> None:
         self.tokenizer = tokenizer
         self.batch_size = batch_size
         self.data_args = data_args
+        self.seed = seed
         
     def __call__(self):
         dataset = {}
@@ -39,12 +40,20 @@ class Processor:
                 train_data = Dataset.from_list(train_data)
                 train_data = multi_trans(train_data, "en", "vi")
             else:
-                train_data = train_data.map(
-                    multi_trans_steaming,
-                    fn_kwargs={"language_a": "en", "language_b": "en"},
+                en_2_vi = train_data.map(
+                    a_2_b,
+                    fn_kwargs={"language_a": "en", "language_b": "vi"},
                     batched=True,
                     remove_columns=['en', 'vi']
                 )
+                vi_2_en = train_data.map(
+                    a_2_b,
+                    fn_kwargs={"language_a": "vi", "language_b": "en"},
+                    batched=True,
+                    remove_columns=['en', 'vi']
+                )
+                train_data = interleave_datasets([en_2_vi, vi_2_en], seed=self.seed)
+                train_data = train_data.shuffle(seed=self.seed, buffer_size=10_000)
             dataset['train'] = self.process_fn(train_data)
             
         # validation set
