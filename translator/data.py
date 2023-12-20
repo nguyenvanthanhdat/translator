@@ -4,7 +4,7 @@ import logging
 
 from datasets import Dataset, load_dataset, load_from_disk
 from transformers import DataCollatorForSeq2Seq
-from translator.features.finetune.utils import multi_trans
+from translator.features.finetune.utils import multi_trans_steaming, multi_trans
 
 
 logger = logging.getLogger(__name__)
@@ -38,6 +38,12 @@ class Processor:
                 train_data = list(train_data.take(self.data_args.max_train_samples))
                 train_data = Dataset.from_list(train_data)
                 train_data = multi_trans(train_data, "en", "vi")
+            else:
+                train_data = train_data.map(
+                    multi_trans_steaming,
+                    fn_kwargs={"language_a": "en", "language_b": "en"},
+                    batched=True
+                )
             dataset['train'] = self.process_fn(train_data)
             
         # validation set

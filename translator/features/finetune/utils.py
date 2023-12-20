@@ -33,6 +33,13 @@ def multi_trans(dataset, language_a, language_b):
     new_dataset = datasets.concatenate_datasets([dataset_a_2_b, dataset_b_2_a])
     return new_dataset
 
+def multi_trans_steaming(examples, language_a, language_b):
+    examples['inputs'] = [f'{language_a}: {sample}' for sample in examples[language_a]] \
+        + [f'{language_a}: {sample}' for sample in examples[language_b]]
+    examples['targets'] = [f'{language_b}: {sample}' for sample in examples[language_b]] \
+        + [f'{language_a}: {sample}' for sample in examples[language_a]]
+    return examples
+
 def gsm8k_fn(source, target, example_src, example_tgt):
     # explanation inputs
     expl_prompt = EXPL_PROMPT.replace('$SOURCE_LANG', source.strip())\
