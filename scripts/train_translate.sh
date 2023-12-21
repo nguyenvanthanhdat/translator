@@ -25,7 +25,7 @@ SAVE_EVAL_STEP=2_000_000
     --linear_layer \
     --att_blocks \
     --per_device_train_batch_size $BZ \
-    --per_device_train_batch_size $BZ \
+    --per_device_eval_batch_size $BZ \
     --num_train_epochs 4 \
     --gradient_accumulation_steps 1\
     --max_len 256 \
