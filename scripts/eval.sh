@@ -11,7 +11,7 @@ ALL_STEP=50_000_000
 SAVE_EVAL_STEP=2_000_000
 
 
-CUDA_VISIBLE_DEVICES=0 python -m translator.training \
+CUDA_VISIBLE_DEVICES=0 python -m translator.eval \
     --model_name_or_path $MODEL_NAME_OR_PATH \
     --tokenizer_name_or_path $TOKEN_NAME \
     --hf_key $HF_TOKEN \
