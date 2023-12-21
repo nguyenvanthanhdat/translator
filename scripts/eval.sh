@@ -1,8 +1,8 @@
-MODEL_NAME_OR_PATH="google/mt5-large"
+MODEL_NAME_OR_PATH="google/mt5-small"
 # MODEL_NAME_OR_PATH="model/pt_full_model"
-TOKEN_NAME='google/mt5-large'
+TOKEN_NAME='google/mt5-small'
 HF_TOKEN='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' 
-DATASET_TEST_PATH='presencesw/hash_20_256_v2'
+DATA_TEST_PATH='presencesw/phomt_eval'
 SPLIT='test'
 OUTPUT_DIR='outputs'
 SAVE_DIR='model'
@@ -17,7 +17,7 @@ CUDA_VISIBLE_DEVICES=0 python -m translator.eval \
     --hf_key $HF_TOKEN \
     --data_test_path $DATA_TEST_PATH \
     --split $SPLIT \
-    --streaming \
+    --num_proc 1 \
     --max_len 256 \
-    --num_beams 256 \
+    --num_beams 5 \
     --hf_key $HF_TOKEN \
