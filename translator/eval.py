@@ -15,14 +15,15 @@ from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 import evaluate
 
 def get_output(examples, model, tokenizer, max_length, num_beams):
-    prefix = examples['input'].strip()
-    inputs = tokenizer.encode(prefix, return_tensors="pt").to("cuda")
+    prefix = [exp.strip() for exp in examples['input']]
+    inputs = tokenizer.encode_batch(prefix, return_tensors="pt").to("cuda")
     outputs = model.generate(inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
                              num_beams=num_beams,
                              early_stopping=True)
-    outputs = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    outputs = [output[0] for output in outputs]
+    outputs = tokenizer.decode_batch(outputs, skip_special_tokens=True)
     examples['predict'] = outputs
     return examples
 
@@ -105,11 +106,12 @@ if __name__ == "__main__":
             dataset = dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
+                        batched=True,
                         remove_columns=['input'])
         
             print("*"*20,"Postprocess data","*"*20)
             dataset = dataset.map(postprocess, batched=True)
-            dataset.to_json(os.paht.join(eval_path,f"{languages[0]}{languages[1]}-beam{num_beam}.txt"))
+            dataset.to_json(os.path.join(eval_path,f"{languages[0]}{languages[1]}-beam{num_beam}.txt"))
 
     bleu = evaluate.load("bleu")
     results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
