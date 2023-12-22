@@ -120,6 +120,8 @@ if __name__ == "__main__":
             else:
                 language_a = "vi"
                 language_b = "en"
+            print(type(dataset))
+            print(dataset)
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
             dataset = dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
