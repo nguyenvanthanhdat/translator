@@ -36,10 +36,8 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
 def preprocess(examples, language_a = 'en', language_b = 'vi'):
     
     # change dataset to inputs, !!! not has targets 
-    examples['inputs'] = [f'{language_a}: {sample}' for sample in examples[language_a]] \
-        + [f'{language_a}: {sample}' for sample in examples[language_b]]
-    examples['targets'] = [f'{language_b}: {sample}' for sample in examples[language_b]] \
-        + [f'{language_a}: {sample}' for sample in examples[language_a]]
+    examples['inputs'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
+    examples['targets'] = [f'{language_b}: {sample}' for sample in examples[language_b]] 
     return examples
 
 def postprocess(examples):
