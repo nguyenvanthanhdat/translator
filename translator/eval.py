@@ -123,10 +123,6 @@ if __name__ == "__main__":
                             batch_size=args.batch_size,
                             remove_columns=['input'])
             
-                print("*"*20,"Postprocess data","*"*20)
-                dataset_envi = dataset_envi.map(postprocess, batched=True)
-                print(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
-                dataset_envi.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
             if distribute == 1:
                 language_a = "vi"
                 language_b = "en"
@@ -137,10 +133,15 @@ if __name__ == "__main__":
                             batched=True,
                             batch_size=args.batch_size,
                             remove_columns=['input'])
-            
-                print("*"*20,"Postprocess data","*"*20)
-                dataset_vien = dataset_vien.map(postprocess, batched=True)
-                dataset_vien.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
+        try:
+            print("*"*20,"Postprocess data","*"*20)
+            dataset_envi = dataset_envi.map(postprocess, batched=True)
+            print(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
+            dataset_envi.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt")) 
+        except:
+            print("*"*20,"Postprocess data","*"*20)
+            dataset_vien = dataset_vien.map(postprocess, batched=True)
+            dataset_vien.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
 
     # bleu = evaluate.load("bleu")
     # results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
