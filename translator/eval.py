@@ -5,6 +5,7 @@ from transformers import (
     AutoTokenizer, 
     AutoModelForSeq2SeqLM,
     Seq2SeqTrainingArguments,
+    T5Tokenizer
 )
 import transformers
 # from adapters import AutoAdapterModel
@@ -16,14 +17,18 @@ import evaluate
 
 def get_output(examples, model, tokenizer, max_length, num_beams):
     prefix = [exp.strip() for exp in examples['input']]
-    inputs = tokenizer.encode_batch(prefix, return_tensors="pt").to("cuda")
-    outputs = model.generate(inputs, 
+    inputs = tokenizer(
+        prefix, return_tensors="pt",
+        padding=True
+    ).to("cuda")
+    outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
                              num_beams=num_beams,
                              early_stopping=True)
     outputs = [output[0] for output in outputs]
-    outputs = tokenizer.decode_batch(outputs, skip_special_tokens=True)
+    outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    
     examples['predict'] = outputs
     return examples
 
