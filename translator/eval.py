@@ -33,7 +33,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     examples['predict'] = outputs
     return examples
 
-def preprocess(examples, language_a = 'en', language_b = 'vi'):
+def preprocess(examples, language_a, language_b):
     
     # change dataset to inputs, !!! not has targets 
     examples['inputs'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
