@@ -113,10 +113,13 @@ if __name__ == "__main__":
         )
 
         distributed_state = PartialState()
-        with distributed_state.split_between_processes([[dataset_envi, "en", "vi"], [dataset_vien, "vi", "en"]]) as distribute:
-            dataset = distribute[0]
-            language_a = distribute[1]
-            language_b = distribute[2]
+        with distributed_state.split_between_processes([dataset_envi, dataset_vien]) as dataset:
+            if dataset == dataset_envi:
+                language_a = "en"
+                language_b = "vi"
+            else:
+                language_a = "vi"
+                language_b = "en"
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
             dataset = dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
