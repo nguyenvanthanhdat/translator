@@ -141,7 +141,7 @@ if __name__ == "__main__":
                 dataset_vien = dataset_vien.map(postprocess, batched=True)
                 dataset_vien.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
 
-    bleu = evaluate.load("bleu")
-    results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
-    print(results)
-    print("*"*20,"ALL DONE","*"*20)
+    # bleu = evaluate.load("bleu")
+    # results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
+    # print(results)
+    # print("*"*20,"ALL DONE","*"*20)
