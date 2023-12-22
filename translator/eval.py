@@ -122,7 +122,7 @@ if __name__ == "__main__":
                             batched=True,
                             batch_size=args.batch_size,
                             remove_columns=['input'])
-            
+                print(dataset_envi)
             if distribute == 1:
                 language_a = "vi"
                 language_b = "en"
