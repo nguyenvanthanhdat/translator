@@ -125,6 +125,7 @@ if __name__ == "__main__":
             
                 print("*"*20,"Postprocess data","*"*20)
                 dataset_envi = dataset_envi.map(postprocess, batched=True)
+                print(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
                 dataset_envi.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
             if distribute == 1:
                 language_a = "vi"
