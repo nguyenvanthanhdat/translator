@@ -14,6 +14,7 @@ from argparse import ArgumentParser
 import os, sys, logging
 from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 import evaluate
+from accelerate import PartialState
 
 def get_output(examples, model, tokenizer, max_length, num_beams):
     prefix = [exp.strip() for exp in examples['input']]
@@ -99,27 +100,34 @@ if __name__ == "__main__":
     print("*"*20,"Translate ...","*"*20)
     num_beams = args.num_beams.split(",")
     for num_beam in num_beams:
-        for languages in ['en->vi', 'vi->en']:
-            languages = languages.split('->')
-            print("*"*20,f"Preprocess data {languages[0]} -> {languages[1]}","*"*20)
-            dataset = dataset.map(
-                preprocess, remove_columns=[languages[0], languages[1]], batched=True,
-                fn_kwargs={"language_a": languages[0], "language_b": languages[1]}
-            )
+        print("*"*20,f"Preprocess data {"en"} -> {"vi"}","*"*20)
+        dataset_envi = dataset.map(
+            preprocess, remove_columns=["en", "vi"], batched=True,
+            fn_kwargs={"language_a": "en", "language_b": "vi"}
+        )
 
+        print("*"*20,f"Preprocess data {"vi"} -> {"en"}","*"*20)
+        dataset_vien = dataset.map(
+            preprocess, remove_columns=["vi", "en"], batched=True,
+            fn_kwargs={"language_a": "vi", "language_b": "en"}
+        )
 
-            print("*"*20,f"Translate with num_bema = {num_beam}, {languages[0]} -> {languages[1]} ...","*"*20)
+        distributed_state = PartialState()
+        with distributed_state.split_between_processes([[dataset_envi, "en", "vi"], [dataset_vien, "vi", "en"]]) as distribute:
+            dataset = distribute[0]
+            language_a = distribute[1]
+            language_b = distribute[2]
+            print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
             dataset = dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
                         batched=True,
                         batch_size=args.batch_size,
-                        num_proc=args.num_proc,
                         remove_columns=['input'])
         
             print("*"*20,"Postprocess data","*"*20)
             dataset = dataset.map(postprocess, batched=True)
-            dataset.to_json(os.path.join(eval_path,f"{languages[0]}{languages[1]}-beam{num_beam}.txt"))
+            dataset.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
 
     bleu = evaluate.load("bleu")
     results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
