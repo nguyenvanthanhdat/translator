@@ -114,6 +114,7 @@ if __name__ == "__main__":
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
                         batched=True,
                         batch_size=args.batch_size,
+                        num_proc=args.num_proc,
                         remove_columns=['input'])
         
             print("*"*20,"Postprocess data","*"*20)
