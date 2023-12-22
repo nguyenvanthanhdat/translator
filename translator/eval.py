@@ -54,6 +54,7 @@ if __name__ == "__main__":
     parser.add_argument('--model_name_or_path', default=None, required=True)
     parser.add_argument('--tokenizer_name_or_path', default=None, required=True)
     parser.add_argument('--num_proc', default=2, required=False, type=int)
+    parser.add_argument('--batch_size', default=100, required=False, type=int)
     parser.add_argument('--max_length', default=256, required=False, type=int)
     parser.add_argument('--num_beams', default=5, required=False)
     args = parser.parse_args()
@@ -112,6 +113,7 @@ if __name__ == "__main__":
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
                         batched=True,
+                        batch_size=args.batch_size,
                         remove_columns=['input'])
         
             print("*"*20,"Postprocess data","*"*20)
