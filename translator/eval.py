@@ -15,7 +15,7 @@ from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 import evaluate
 
 def get_output(examples, model, tokenizer, max_length, num_beams):
-    prefix = examples['inputs'].strip()
+    prefix = examples['input'].strip()
     inputs = tokenizer.encode(prefix, return_tensors="pt").to("cuda")
     outputs = model.generate(inputs, 
                             #  max_new_tokens=max_length,
@@ -105,13 +105,13 @@ if __name__ == "__main__":
             dataset = dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                 "max_length": args.max_length, "num_beams": num_beam},
-                        remove_columns=['inputs'])
+                        remove_columns=['input'])
         
             print("*"*20,"Postprocess data","*"*20)
             dataset = dataset.map(postprocess, batched=True)
             dataset.to_json(os.paht.join(eval_path,f"{languages[0]}{languages[1]}-beam{num_beam}.txt"))
 
     bleu = evaluate.load("bleu")
-    results = bleu.compute(predictions=dataset['predict'], references=dataset['targets'])
+    results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
     print(results)
     print("*"*20,"ALL DONE","*"*20)
