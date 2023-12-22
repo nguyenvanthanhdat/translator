@@ -29,14 +29,12 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
 def preprocess(examples, language_a = 'en', language_b = 'vi'):
     
     # change dataset to inputs, !!! not has targets 
-    examples['inputs'] = [f'{language_a}: {sample}' for sample in examples[language_a]] \
-        + [f'{language_a}: {sample}' for sample in examples[language_b]]
-    examples['targets'] = [f'{language_b}: {sample}' for sample in examples[language_b]] \
-        + [f'{language_a}: {sample}' for sample in examples[language_a]]
+    examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
+    examples['label'] = [f'{language_b}: {sample}' for sample in examples[language_b]] 
     return examples
 
 def postprocess(examples):
-    for exp in examples['translated']:
+    for exp in examples['predict']:
         if exp[:4] in ["vi: ", "en: "]:
             exp = exp[4:]
     return examples
@@ -51,10 +49,11 @@ if __name__ == "__main__":
     parser.add_argument('--tokenizer_name_or_path', default=None, required=True)
     parser.add_argument('--num_proc', default=2, required=False, type=int)
     parser.add_argument('--max_length', default=256, required=False, type=int)
-    parser.add_argument('--num_beams', default=5, required=False, type=int)
+    parser.add_argument('--num_beams', default=5, required=False)
     args = parser.parse_args()
 
     path = os.getcwd()
+    eval_path = os.path.join(os.getcwd, "/eval")
     
     # load dataset to evaluate
     print("*"*20,"Load dataset","*"*20)
@@ -75,8 +74,8 @@ if __name__ == "__main__":
     print("*"*20,"Load dataset Done","*"*20)
     
     # preprocess dataset ['en', 'vi'] -> ['inputs']
-    print("*"*20,"Preprocess data","*"*20)
-    dataset = dataset.map(preprocess, remove_columns=['en', 'vi'], batched=True)
+    # print("*"*20,"Preprocess data","*"*20)
+    # dataset = dataset.map(preprocess, remove_columns=['en', 'vi'], batched=True)
 
     # Load model
     if os.path.isdir(os.path.join(path, args.model_name_or_path)):
@@ -91,15 +90,28 @@ if __name__ == "__main__":
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name_or_path)
     # model = PeftModel.from_pretrained(model, args.adapters_path)
     print("*"*20,"Translate ...","*"*20)
-    dataset = dataset.map(get_output,
-                fn_kwargs={"tokenizer": tokenizer, "model": model, 
-                           "max_length": args.max_length, "num_beams": args.num_beams},
-                remove_columns=['inputs'])
-    
-    print("*"*20,"Postprocess data","*"*20)
-    dataset = dataset.map(postprocess, batched=True)
+    num_beams = args.num_beams.split(",")
+    for num_beam in num_beams:
+        for languages in ['en->vi', 'vi->en']:
+            languages = languages.split('->')
+            print("*"*20,f"Preprocess data {languages[0]} -> {languages[1]}","*"*20)
+            dataset = dataset.map(
+                preprocess, remove_columns=[languages[0], languages[1]], batched=True,
+                fn_kwargs={"language_a": languages[0], "language_b": languages[1]}
+            )
+
+
+            print("*"*20,f"Translate with num_bema = {num_beam}, {languages[0]} -> {languages[1]} ...","*"*20)
+            dataset = dataset.map(get_output,
+                        fn_kwargs={"tokenizer": tokenizer, "model": model, 
+                                "max_length": args.max_length, "num_beams": num_beam},
+                        remove_columns=['inputs'])
+        
+            print("*"*20,"Postprocess data","*"*20)
+            dataset = dataset.map(postprocess, batched=True)
+            dataset.to_json(os.paht.join(eval_path,f"{languages[0]}{languages[1]}-beam{num_beam}.txt"))
 
     bleu = evaluate.load("bleu")
-    results = bleu.compute(predictions=dataset['translated'], references=dataset['targets'])
+    results = bleu.compute(predictions=dataset['predict'], references=dataset['targets'])
     print(results)
     print("*"*20,"ALL DONE","*"*20)
