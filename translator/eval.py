@@ -122,7 +122,7 @@ if __name__ == "__main__":
                 language_b = "en"
             dataset = dataset[0] # List[Dataset] -> Dataset
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-            dataset = dataset.map(get_output,
+            new_dataset = dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
                         batched=True,
@@ -130,8 +130,8 @@ if __name__ == "__main__":
                         remove_columns=['input'])
         
             print("*"*20,"Postprocess data","*"*20)
-            dataset = dataset.map(postprocess, batched=True)
-            dataset.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
+            new_dataset = new_dataset.map(postprocess, batched=True)
+            new_dataset.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
 
     bleu = evaluate.load("bleu")
     results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
