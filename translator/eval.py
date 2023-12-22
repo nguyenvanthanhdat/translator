@@ -36,8 +36,10 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
 def preprocess(examples, language_a = 'en', language_b = 'vi'):
     
     # change dataset to inputs, !!! not has targets 
-    examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
-    examples['label'] = [f'{language_b}: {sample}' for sample in examples[language_b]] 
+    examples['inputs'] = [f'{language_a}: {sample}' for sample in examples[language_a]] \
+        + [f'{language_a}: {sample}' for sample in examples[language_b]]
+    examples['targets'] = [f'{language_b}: {sample}' for sample in examples[language_b]] \
+        + [f'{language_a}: {sample}' for sample in examples[language_a]]
     return examples
 
 def postprocess(examples):
@@ -99,39 +101,47 @@ if __name__ == "__main__":
     # model = PeftModel.from_pretrained(model, args.adapters_path)
     print("*"*20,"Translate ...","*"*20)
     num_beams = args.num_beams.split(",")
+    print("*"*20,f"Preprocess data","*"*20)
+    dataset_envi = dataset.map(
+        preprocess, remove_columns=["en", "vi"], batched=True,
+        fn_kwargs={"language_a":"en","language_b":"vi"}
+    )
+
+    dataset_vien = dataset.map(
+        preprocess, remove_columns=["en", "vi"], batched=True,
+        fn_kwargs={"language_a":"vi","language_b":"en"}
+    )
+    distributed_state = PartialState()
     for num_beam in num_beams:
-        print("*"*20,f"Preprocess data en -> vi","*"*20)
-        dataset_envi = dataset.map(
-            preprocess, remove_columns=["en", "vi"], batched=True,
-            fn_kwargs={"language_a": "en", "language_b": "vi"}
-        )
-
-        print("*"*20,f"Preprocess data vi -> en","*"*20)
-        dataset_vien = dataset.map(
-            preprocess, remove_columns=["vi", "en"], batched=True,
-            fn_kwargs={"language_a": "vi", "language_b": "en"}
-        )
-
-        distributed_state = PartialState()
-        with distributed_state.split_between_processes([dataset_envi, dataset_vien]) as dataset:
-            if dataset == dataset_envi:
+        with distributed_state.split_between_processes([0, 1]) as distribute:
+            if distribute == 0:
                 language_a = "en"
                 language_b = "vi"
-            else:
+                print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
+                dataset_envi = dataset_envi.map(get_output,
+                            fn_kwargs={"tokenizer": tokenizer, "model": model, 
+                                    "max_length": args.max_length, "num_beams": int(num_beam)},
+                            batched=True,
+                            batch_size=args.batch_size,
+                            remove_columns=['input'])
+            
+                print("*"*20,"Postprocess data","*"*20)
+                dataset_envi = dataset_envi.map(postprocess, batched=True)
+                dataset_envi.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
+            if distribute == 1:
                 language_a = "vi"
                 language_b = "en"
-            dataset = dataset[0] # List[Dataset] -> Dataset
-            print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-            new_dataset = dataset.map(get_output,
-                        fn_kwargs={"tokenizer": tokenizer, "model": model, 
-                                "max_length": args.max_length, "num_beams": int(num_beam)},
-                        batched=True,
-                        batch_size=args.batch_size,
-                        remove_columns=['input'])
-        
-            print("*"*20,"Postprocess data","*"*20)
-            new_dataset = new_dataset.map(postprocess, batched=True)
-            new_dataset.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
+                print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
+                dataset_vien = dataset_vien.map(get_output,
+                            fn_kwargs={"tokenizer": tokenizer, "model": model, 
+                                    "max_length": args.max_length, "num_beams": int(num_beam)},
+                            batched=True,
+                            batch_size=args.batch_size,
+                            remove_columns=['input'])
+            
+                print("*"*20,"Postprocess data","*"*20)
+                dataset_vien = dataset_vien.map(postprocess, batched=True)
+                dataset_vien.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
 
     bleu = evaluate.load("bleu")
     results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
