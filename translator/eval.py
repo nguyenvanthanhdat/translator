@@ -104,7 +104,7 @@ if __name__ == "__main__":
             print("*"*20,f"Translate with num_bema = {num_beam}, {languages[0]} -> {languages[1]} ...","*"*20)
             dataset = dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
-                                "max_length": args.max_length, "num_beams": num_beam},
+                                "max_length": args.max_length, "num_beams": int(num_beam)},
                         remove_columns=['input'])
         
             print("*"*20,"Postprocess data","*"*20)
