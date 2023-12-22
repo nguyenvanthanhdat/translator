@@ -100,13 +100,13 @@ if __name__ == "__main__":
     print("*"*20,"Translate ...","*"*20)
     num_beams = args.num_beams.split(",")
     for num_beam in num_beams:
-        print("*"*20,f"Preprocess data {"en"} -> {"vi"}","*"*20)
+        print("*"*20,f"Preprocess data en -> vi","*"*20)
         dataset_envi = dataset.map(
             preprocess, remove_columns=["en", "vi"], batched=True,
             fn_kwargs={"language_a": "en", "language_b": "vi"}
         )
 
-        print("*"*20,f"Preprocess data {"vi"} -> {"en"}","*"*20)
+        print("*"*20,f"Preprocess data vi -> en","*"*20)
         dataset_vien = dataset.map(
             preprocess, remove_columns=["vi", "en"], batched=True,
             fn_kwargs={"language_a": "vi", "language_b": "en"}
