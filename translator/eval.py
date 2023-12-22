@@ -53,7 +53,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     path = os.getcwd()
-    eval_path = os.path.join(os.getcwd, "/eval")
+    eval_path = os.path.join(os.getcwd(), "/eval")
     
     # load dataset to evaluate
     print("*"*20,"Load dataset","*"*20)
