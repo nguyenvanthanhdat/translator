@@ -118,7 +118,6 @@ if __name__ == "__main__":
             model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path).to('cuda')
         for num_beam in args.num_beams.split(","): # [3, 4, 5]
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-            print(dataset)
             print("*"*20,f"Preprocess data","*"*20)
             proprocess_dataset = dataset.map(
                 preprocess, remove_columns=["en", "vi"], batched=True,
