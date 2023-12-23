@@ -114,11 +114,11 @@ if __name__ == "__main__":
         else:
             model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path).to('cuda')
         print("*"*20,f"Preprocess data","*"*20)
-        proprocess_dataset = dataset.map(
+        preprocess_dataset = dataset.map(
             preprocess, remove_columns=["en", "vi"], batched=True,
             fn_kwargs={"language_a": language_a,"language_b":language_b}
         )
-        token_dataset = preprocess.map(
+        token_dataset = preprocess_dataset.map(
             tokenize, batched=True,
             fn_kwargs={"token": tokenizer, "max_length": args.max_length}
         )
