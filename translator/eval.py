@@ -41,6 +41,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     inputs = copy.deepcopy(examples)
     print(type(inputs))
     print(inputs)
+    inptus = dict(inputs)
     inputs = inputs.pop('len')
     inputs = inputs.pop('input')
     inputs = inputs.pop('target')
