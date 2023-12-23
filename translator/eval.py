@@ -46,7 +46,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     inputs.pop('len')
     inputs.pop('input')
     inputs.pop('target')
-    inputs = {key: torch.tensor(inputs[key]) for key in inputs}.to('cuda')
+    inputs = {key: torch.tensor(inputs[key]).to('cuda') for key in inputs}
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
