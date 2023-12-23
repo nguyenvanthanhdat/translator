@@ -39,8 +39,8 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     #     padding="max_length", truncation=True, max_length=max_length
     # ).to("cuda")
     inputs = copy.deepcopy(examples)
-    print(type(inputs))
-    print(inputs)
+    # print(type(inputs))
+    # print(inputs)
     inptus = dict(inputs)
     inputs = inputs.pop('len')
     inputs = inputs.pop('input')
