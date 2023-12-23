@@ -31,7 +31,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     
     examples['predict'] = outputs
-    return examples.to('cpu')
+    return examples
 
 def preprocess(examples, language_a, language_b):
     
