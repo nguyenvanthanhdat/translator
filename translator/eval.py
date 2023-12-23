@@ -15,6 +15,7 @@ import os, sys, logging
 from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 import evaluate
 from accelerate import PartialState
+import copy 
 
 def preprocess(examples, language_a, language_b):
     examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
@@ -37,7 +38,10 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     #     prefix, return_tensors="pt",
     #     padding="max_length", truncation=True, max_length=max_length
     # ).to("cuda")
-    inputs = examples
+    inputs = copy.deepcopy(examples)
+    inputs = inputs.pop('len')
+    inputs = inputs.pop('input')
+    inputs = inputs.pop('target')
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
