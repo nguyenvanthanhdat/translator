@@ -16,12 +16,22 @@ from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 import evaluate
 from accelerate import PartialState
 
-def get_output(examples, model, tokenizer, max_length, num_beams):
+def tokenize(examples, token, max_length):
     prefix = [exp.strip() for exp in examples['input']]
     inputs = tokenizer(
         prefix, return_tensors="pt",
         padding="max_length", truncation=True, max_length=max_length
     ).to("cuda")
+    examples['token'] = inputs
+    return examples
+
+def get_output(examples, model, tokenizer, max_length, num_beams):
+    # prefix = [exp.strip() for exp in examples['input']]
+    # inputs = tokenizer(
+    #     prefix, return_tensors="pt",
+    #     padding="max_length", truncation=True, max_length=max_length
+    # ).to("cuda")
+    inputs = examples['token'].to('cuda')
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
@@ -93,19 +103,6 @@ if __name__ == "__main__":
         tokenizer = AutoTokenizer.from_pretrained(os.path.join(path, args.model_name_or_path))
     else:
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name_or_path)
-    # model = PeftModel.from_pretrained(model, args.adapters_path)
-    # print("*"*20,"Translate ...","*"*20)
-    # num_beams = args.num_beams.split(",")
-    # print("*"*20,f"Preprocess data","*"*20)
-    # dataset_envi = dataset.map(
-    #     preprocess, remove_columns=["en", "vi"], batched=True,
-    #     fn_kwargs={"language_a":"en","language_b":"vi"}
-    # )
-
-    # dataset_vien = dataset.map(
-    #     preprocess, remove_columns=["en", "vi"], batched=True,
-    #     fn_kwargs={"language_a":"vi","language_b":"en"}
-    # )
     distributed_state = PartialState()
     with distributed_state.split_between_processes(["en->vi", "vi->en"]) as distribute:
         distribute = distribute[0].split("->")
@@ -116,19 +113,24 @@ if __name__ == "__main__":
             model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path)).to('cuda')
         else:
             model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path).to('cuda')
+        print("*"*20,f"Preprocess data","*"*20)
+        proprocess_dataset = dataset.map(
+            preprocess, remove_columns=["en", "vi"], batched=True,
+            fn_kwargs={"language_a": language_a,"language_b":language_b}
+        )
+        token_dataset = preprocess.map(
+            tokenize, batched=True,
+            fn_kwargs={"token": tokenizer, "max_length": args.max_length}
+        )
+        
+
         for num_beam in args.num_beams.split(","): # [3, 4, 5]
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-            print("*"*20,f"Preprocess data","*"*20)
-            proprocess_dataset = dataset.map(
-                preprocess, remove_columns=["en", "vi"], batched=True,
-                fn_kwargs={"language_a": language_a,"language_b":language_b}
-            )
-            dataset_translated = proprocess_dataset.map(get_output,
+            dataset_translated = token_dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
                         batched=True,
-                        batch_size=args.batch_size,
-                        remove_columns=['input'])
+                        batch_size=args.batch_size)
             print("*"*20,"Postprocess data","*"*20)
             # print(dataset_envi)
             dataset_translated = dataset_translated.map(postprocess, batched=True)
