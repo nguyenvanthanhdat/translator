@@ -35,19 +35,19 @@ def tokenize(examples, token, max_length):
     return examples
 
 def get_output(examples, model, tokenizer, max_length, num_beams):
-    # prefix = [exp.strip() for exp in examples['input']]
-    # inputs = tokenizer(
-    #     prefix, return_tensors="pt",
-    #     padding="max_length", truncation=True, max_length=max_length
-    # ).to("cuda")
-    inputs = copy.deepcopy(examples)
-    # print(type(inputs))
-    # print(inputs)
-    # inptus = dict(inputs)
-    inputs.pop('len')
-    inputs.pop('input')
-    inputs.pop('label')
-    inputs = {key: torch.tensor(inputs[key]).to('cuda') for key in inputs}
+    prefix = [exp.strip() for exp in examples['input']]
+    inputs = tokenizer(
+        prefix, return_tensors="pt",
+        padding="max_length", truncation=True, max_length=max_length
+    ).to("cuda")
+    # inputs = copy.deepcopy(examples)
+    # # print(type(inputs))
+    # # print(inputs)
+    # # inptus = dict(inputs)
+    # inputs.pop('len')
+    # inputs.pop('input')
+    # inputs.pop('label')
+    # inputs = {key: torch.tensor(inputs[key]).to('cuda') for key in inputs}
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
@@ -127,15 +127,15 @@ if __name__ == "__main__":
             preprocess, remove_columns=["en", "vi"], batched=True,
             fn_kwargs={"language_a": language_a,"language_b":language_b}
         )
-        token_dataset = preprocess_dataset.map(
-            tokenize, batched=True,
-            fn_kwargs={"token": tokenizer, "max_length": args.max_length}
-        )
+        # token_dataset = preprocess_dataset.map(
+        #     tokenize, batched=True,
+        #     fn_kwargs={"token": tokenizer, "max_length": args.max_length}
+        # )
         
 
         for num_beam in args.num_beams.split(","): # [3, 4, 5]
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-            dataset_translated = token_dataset.map(get_output,
+            dataset_translated = preprocess_dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
                         batched=True,
