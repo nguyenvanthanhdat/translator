@@ -86,10 +86,7 @@ if __name__ == "__main__":
     # dataset = dataset.map(preprocess, remove_columns=['en', 'vi'], batched=True)
 
     # Load model
-    if os.path.isdir(os.path.join(path, args.model_name_or_path)):
-        model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path)).to('cuda')
-    else:
-        model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path).to('cuda')
+    
 
     # Load tokenizer
     if os.path.isdir(os.path.join(path, args.tokenizer_name_or_path)):
@@ -114,6 +111,11 @@ if __name__ == "__main__":
         distribute = distribute[0].split("->")
         language_a = distribute[0]
         language_b = distribute[1]
+
+        if os.path.isdir(os.path.join(path, args.model_name_or_path)):
+            model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path)).to('cuda')
+        else:
+            model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path).to('cuda')
         for num_beam in num_beams:
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
             print(dataset_envi)
