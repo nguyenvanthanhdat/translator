@@ -102,7 +102,7 @@ if __name__ == "__main__":
     print("*"*20,"Load dataset Done","*"*20)
     
     if args.gdown_id is not None:
-        args.model_name_or_path = gdown(id = args.gdown_id)
+        args.model_name_or_path = gdown.download(id = args.gdown_id)
         os.system(f"unzip {args.model_name_or_path}.zip -d .")
         args.model_name_or_path = args.model_name_or_path.split(".")[0]
     
