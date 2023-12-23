@@ -43,6 +43,8 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     # print(inputs)
     inptus = dict(inputs)
     inputs = inputs.pop('len')
+    print(type(inputs))
+    print(inputs)
     inputs = inputs.pop('input')
     inputs = inputs.pop('target')
     outputs = model.generate(**inputs, 
