@@ -41,12 +41,10 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     inputs = copy.deepcopy(examples)
     # print(type(inputs))
     # print(inputs)
-    inptus = dict(inputs)
-    inputs = inputs.pop('len')
-    print(type(inputs))
-    print(inputs)
-    inputs = inputs.pop('input')
-    inputs = inputs.pop('target')
+    # inptus = dict(inputs)
+    inputs.pop('len')
+    inputs.pop('input')
+    inputs.pop('target')
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
