@@ -45,6 +45,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     inputs.pop('len')
     inputs.pop('input')
     inputs.pop('target')
+    print(inputs)
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
