@@ -94,18 +94,18 @@ if __name__ == "__main__":
     else:
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name_or_path)
     # model = PeftModel.from_pretrained(model, args.adapters_path)
-    print("*"*20,"Translate ...","*"*20)
-    num_beams = args.num_beams.split(",")
-    print("*"*20,f"Preprocess data","*"*20)
-    dataset_envi = dataset.map(
-        preprocess, remove_columns=["en", "vi"], batched=True,
-        fn_kwargs={"language_a":"en","language_b":"vi"}
-    )
+    # print("*"*20,"Translate ...","*"*20)
+    # num_beams = args.num_beams.split(",")
+    # print("*"*20,f"Preprocess data","*"*20)
+    # dataset_envi = dataset.map(
+    #     preprocess, remove_columns=["en", "vi"], batched=True,
+    #     fn_kwargs={"language_a":"en","language_b":"vi"}
+    # )
 
-    dataset_vien = dataset.map(
-        preprocess, remove_columns=["en", "vi"], batched=True,
-        fn_kwargs={"language_a":"vi","language_b":"en"}
-    )
+    # dataset_vien = dataset.map(
+    #     preprocess, remove_columns=["en", "vi"], batched=True,
+    #     fn_kwargs={"language_a":"vi","language_b":"en"}
+    # )
     distributed_state = PartialState()
     with distributed_state.split_between_processes(["en->vi", "vi->en"]) as distribute:
         distribute = distribute[0].split("->")
@@ -116,15 +116,27 @@ if __name__ == "__main__":
             model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path)).to('cuda')
         else:
             model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path).to('cuda')
-        for num_beam in num_beams:
+        for num_beam in args.num_beams.split(","): # [3, 4, 5]
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-            print(dataset_envi)
-            dataset_envi = dataset_envi.map(get_output,
+            print(dataset)
+            print("*"*20,f"Preprocess data","*"*20)
+            proprocess_dataset = dataset.map(
+                preprocess, remove_columns=["en", "vi"], batched=True,
+                fn_kwargs={"language_a": language_a,"language_b":language_b}
+            )
+            dataset_translated = proprocess_dataset.map(get_output,
                         fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
                         batched=True,
                         batch_size=args.batch_size,
                         remove_columns=['input'])
+            print("*"*20,"Postprocess data","*"*20)
+            # print(dataset_envi)
+            dataset_translated = dataset_translated.map(postprocess, batched=True)
+            dataset_translated.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
+
+            
+
         # if distribute == 0:
         #     language_a = "en"
         #     language_b = "vi"
