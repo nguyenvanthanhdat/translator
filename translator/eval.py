@@ -116,6 +116,7 @@ if __name__ == "__main__":
                 language_a = "en"
                 language_b = "vi"
                 print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
+                print(dataset_envi)
                 dataset_envi = dataset_envi.map(get_output,
                             fn_kwargs={"tokenizer": tokenizer, "model": model, 
                                     "max_length": args.max_length, "num_beams": int(num_beam)},
