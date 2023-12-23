@@ -141,8 +141,9 @@ if __name__ == "__main__":
                         batched=True,
                         batch_size=args.batch_size)
             print("*"*20,"Postprocess data","*"*20)
-            # print(dataset_envi)
+            print("a")
             dataset_translated = dataset_translated.map(postprocess, batched=True)
+            print("b")
             dataset_translated.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
 
             
