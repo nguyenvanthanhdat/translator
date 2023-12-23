@@ -51,6 +51,8 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
+                             truncation=True,
+                             padding="max_length",
                              num_beams=num_beams,
                              early_stopping=True)
     # outputs = [output[0] for output in outputs]
