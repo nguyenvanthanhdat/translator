@@ -27,6 +27,7 @@ def tokenize(examples, token, max_length):
         prefix, return_tensors="pt",
         padding="max_length", truncation=True, max_length=max_length
     )
+    print(inputs)
     examples['token'] = inputs
     return examples
 
@@ -117,7 +118,7 @@ if __name__ == "__main__":
             fn_kwargs={"language_a": language_a,"language_b":language_b}
         )
         token_dataset = preprocess_dataset.map(
-            tokenize, batched=True,
+            tokenize, batched=True, batch_size=10,
             fn_kwargs={"token": tokenizer, "max_length": args.max_length}
         )
         
