@@ -111,7 +111,18 @@ if __name__ == "__main__":
     )
     distributed_state = PartialState()
     with distributed_state.split_between_processes(["en->vi", "vi->en"]) as distribute:
-        print(distribute)
+        distribute = distribute[0].split("->")
+        language_a = distribute[0]
+        language_b = distribute[1]
+        for num_beam in num_beams:
+            print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
+            print(dataset_envi)
+            dataset_envi = dataset_envi.map(get_output,
+                        fn_kwargs={"tokenizer": tokenizer, "model": model, 
+                                "max_length": args.max_length, "num_beams": int(num_beam)},
+                        batched=True,
+                        batch_size=args.batch_size,
+                        remove_columns=['input'])
         # if distribute == 0:
         #     language_a = "en"
         #     language_b = "vi"
