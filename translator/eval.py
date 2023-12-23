@@ -111,6 +111,7 @@ if __name__ == "__main__":
     )
     distributed_state = PartialState()
     for num_beam in num_beams:
+        print(num_beam)
         with distributed_state.split_between_processes([0, 1]) as distribute:
             if distribute == 0:
                 language_a = "en"
