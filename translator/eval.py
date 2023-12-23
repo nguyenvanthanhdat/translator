@@ -20,7 +20,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     prefix = [exp.strip() for exp in examples['input']]
     inputs = tokenizer(
         prefix, return_tensors="pt",
-        padding=True
+        padding="max_length", truncation=True, max_length=max_length
     ).to("cuda")
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
