@@ -22,7 +22,6 @@ def preprocess(examples, language_a, language_b):
     return examples
 
 def tokenize(examples, token, max_length):
-    print(examples['input'])
     prefix = [exp.strip() for exp in examples['input']]
     inputs = token(
         prefix, return_tensors="pt",
