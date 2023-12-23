@@ -18,7 +18,7 @@ from accelerate import PartialState
 
 def tokenize(examples, token, max_length):
     prefix = [exp.strip() for exp in examples['input']]
-    inputs = tokenizer(
+    inputs = token(
         prefix, return_tensors="pt",
         padding="max_length", truncation=True, max_length=max_length
     ).to("cuda")
