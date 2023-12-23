@@ -17,6 +17,7 @@ import evaluate
 from accelerate import PartialState
 import copy 
 import torch
+import gdown
 
 def preprocess(examples, language_a, language_b):
     examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
@@ -76,6 +77,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', default=100, required=False, type=int)
     parser.add_argument('--max_length', default=256, required=False, type=int)
     parser.add_argument('--num_beams', default=5, required=False)
+    parser.add_argument('--gdown_id', default=None, required=False)
     args = parser.parse_args()
 
     path = os.getcwd()
@@ -99,11 +101,10 @@ if __name__ == "__main__":
         )
     print("*"*20,"Load dataset Done","*"*20)
     
-    # preprocess dataset ['en', 'vi'] -> ['inputs']
-    # print("*"*20,"Preprocess data","*"*20)
-    # dataset = dataset.map(preprocess, remove_columns=['en', 'vi'], batched=True)
-
-    # Load model
+    if args.gdown_id is not None:
+        args.model_name_or_path = gdown(id = args.gdown_id)
+        os.system(f"unzip {args.model_name_or_path}.zip -d .")
+        args.model_name_or_path = args.model_name_or_path.split(".")[0]
     
 
     # Load tokenizer
