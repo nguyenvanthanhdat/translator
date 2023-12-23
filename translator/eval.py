@@ -16,12 +16,18 @@ from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 import evaluate
 from accelerate import PartialState
 
+def preprocess(examples, language_a, language_b):
+    examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
+    examples['target'] = [f'{language_b}: {sample}' for sample in examples[language_b]] 
+    return examples
+
 def tokenize(examples, token, max_length):
+    print(examples['input'])
     prefix = [exp.strip() for exp in examples['input']]
     inputs = token(
         prefix, return_tensors="pt",
         padding="max_length", truncation=True, max_length=max_length
-    ).to("cuda")
+    )
     examples['token'] = inputs
     return examples
 
@@ -41,13 +47,6 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     
     examples['predict'] = outputs
-    return examples
-
-def preprocess(examples, language_a, language_b):
-    
-    # change dataset to inputs, !!! not has targets 
-    examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
-    examples['target'] = [f'{language_b}: {sample}' for sample in examples[language_b]] 
     return examples
 
 def postprocess(examples):
