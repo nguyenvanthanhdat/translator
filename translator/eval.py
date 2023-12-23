@@ -110,31 +110,30 @@ if __name__ == "__main__":
         fn_kwargs={"language_a":"vi","language_b":"en"}
     )
     distributed_state = PartialState()
-    for num_beam in num_beams:
-        print(num_beam)
-        with distributed_state.split_between_processes([0, 1]) as distribute:
-            if distribute == 0:
-                language_a = "en"
-                language_b = "vi"
-                print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-                print(dataset_envi)
-                dataset_envi = dataset_envi.map(get_output,
-                            fn_kwargs={"tokenizer": tokenizer, "model": model, 
-                                    "max_length": args.max_length, "num_beams": int(num_beam)},
-                            batched=True,
-                            batch_size=args.batch_size,
-                            remove_columns=['input'])
-                print(dataset_envi)
-            if distribute == 1:
-                language_a = "vi"
-                language_b = "en"
-                print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-                dataset_vien = dataset_vien.map(get_output,
-                            fn_kwargs={"tokenizer": tokenizer, "model": model, 
-                                    "max_length": args.max_length, "num_beams": int(num_beam)},
-                            batched=True,
-                            batch_size=args.batch_size,
-                            remove_columns=['input'])
+    with distributed_state.split_between_processes(["en->vi", "vi->en"]) as distribute:
+        print(distribute)
+        # if distribute == 0:
+        #     language_a = "en"
+        #     language_b = "vi"
+        #     print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
+        #     print(dataset_envi)
+        #     dataset_envi = dataset_envi.map(get_output,
+        #                 fn_kwargs={"tokenizer": tokenizer, "model": model, 
+        #                         "max_length": args.max_length, "num_beams": int(num_beam)},
+        #                 batched=True,
+        #                 batch_size=args.batch_size,
+        #                 remove_columns=['input'])
+        #     print(dataset_envi)
+        # if distribute == 1:
+        #     language_a = "vi"
+        #     language_b = "en"
+        #     print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
+        #     dataset_vien = dataset_vien.map(get_output,
+        #                 fn_kwargs={"tokenizer": tokenizer, "model": model, 
+        #                         "max_length": args.max_length, "num_beams": int(num_beam)},
+        #                 batched=True,
+        #                 batch_size=args.batch_size,
+        #                 remove_columns=['input'])
         # try:
         #     print("*"*20,"Postprocess data","*"*20)
         #     # print(dataset_envi)
