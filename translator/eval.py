@@ -27,8 +27,8 @@ def tokenize(examples, token, max_length):
         prefix, return_tensors="pt",
         padding="max_length", truncation=True, max_length=max_length
     )
-    print(inputs)
-    examples['token'] = inputs
+    examples['input_ids'] = inputs['input_ids']
+    examples['attention_mask'] = inputs['attention_mask']
     return examples
 
 def get_output(examples, model, tokenizer, max_length, num_beams):
@@ -37,7 +37,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     #     prefix, return_tensors="pt",
     #     padding="max_length", truncation=True, max_length=max_length
     # ).to("cuda")
-    inputs = examples['token'].to('cuda')
+    inputs = examples
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
