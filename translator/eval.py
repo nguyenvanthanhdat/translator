@@ -16,6 +16,7 @@ from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 import evaluate
 from accelerate import PartialState
 import copy 
+import torch
 
 def preprocess(examples, language_a, language_b):
     examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
@@ -45,7 +46,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     inputs.pop('len')
     inputs.pop('input')
     inputs.pop('target')
-    print(inputs)
+    inputs = {key: torch.tensor(inputs[key]) for key in inputs}
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
                              max_length=max_length,
