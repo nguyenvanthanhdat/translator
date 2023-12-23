@@ -21,7 +21,7 @@ import gdown
 
 def preprocess(examples, language_a, language_b):
     examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
-    examples['target'] = [f'{language_b}: {sample}' for sample in examples[language_b]] 
+    examples['label'] = [f'{language_b}: {sample}' for sample in examples[language_b]] 
     return examples
 
 def tokenize(examples, token, max_length):
@@ -146,43 +146,16 @@ if __name__ == "__main__":
             # dataset_translated.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
             dataset_translated.to_json(f"eval/{language_a}{language_b}-beam{num_beam}.txt", force_ascii=False)
 
-            
-
-        # if distribute == 0:
-        #     language_a = "en"
-        #     language_b = "vi"
-        #     print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-        #     print(dataset_envi)
-        #     dataset_envi = dataset_envi.map(get_output,
-        #                 fn_kwargs={"tokenizer": tokenizer, "model": model, 
-        #                         "max_length": args.max_length, "num_beams": int(num_beam)},
-        #                 batched=True,
-        #                 batch_size=args.batch_size,
-        #                 remove_columns=['input'])
-        #     print(dataset_envi)
-        # if distribute == 1:
-        #     language_a = "vi"
-        #     language_b = "en"
-        #     print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
-        #     dataset_vien = dataset_vien.map(get_output,
-        #                 fn_kwargs={"tokenizer": tokenizer, "model": model, 
-        #                         "max_length": args.max_length, "num_beams": int(num_beam)},
-        #                 batched=True,
-        #                 batch_size=args.batch_size,
-        #                 remove_columns=['input'])
-        # try:
-        #     print("*"*20,"Postprocess data","*"*20)
-        #     # print(dataset_envi)
-        #     dataset_envi = dataset_envi.map(postprocess, batched=True)
-        #     print(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
-        #     # dataset_envi.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt")) 
-        #     dataset_envi.to_json("a.json") 
-        # except:
-        #     print("*"*20,"Postprocess data","*"*20)
-        #     dataset_vien = dataset_vien.map(postprocess, batched=True)
-        #     dataset_vien.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
-
-    # bleu = evaluate.load("bleu")
-    # results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
-    # print(results)
-    # print("*"*20,"ALL DONE","*"*20)
+        os.chdir("eval")
+        bleu = evaluate.load("bleu")
+        score = open("score.txt", "wb")
+        for file_txt in os.listdir("eval"):
+            dataset = load_dataset("json", file_txt, split='train')
+            try:
+                results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
+            except:
+                results = 0
+        score.write(f"{file_txt}: bleu - {results}\n")
+        score.close()
+        os.chdir("..")
+        os.system("zip -r result.zip eval")
