@@ -53,7 +53,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
                              max_length=max_length,
                              num_beams=num_beams,
                              early_stopping=True)
-    outputs = [output[0] for output in outputs]
+    # outputs = [output[0] for output in outputs]
     outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     
     examples['predict'] = outputs
@@ -141,11 +141,10 @@ if __name__ == "__main__":
                         batched=True,
                         batch_size=args.batch_size)
             print("*"*20,"Postprocess data","*"*20)
-            print("a")
             dataset_translated = dataset_translated.map(postprocess, batched=True)
-            print("b")
+            dataset_translated = dataset_translated.remove_columns(['len', "input_ids", "attention_mask"])
             # dataset_translated.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
-            dataset_translated.to_json(f"eval/{language_a}{language_b}-beam{num_beam}.txt")
+            dataset_translated.to_json(f"eval/{language_a}{language_b}-beam{num_beam}.txt", force_ascii=False)
 
             
 
