@@ -10,3 +10,5 @@ sentencepiece
 accelerate
 protobuf
 evaluate
+deepspeed
+wandb

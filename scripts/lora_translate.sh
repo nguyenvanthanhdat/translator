@@ -1,7 +1,7 @@
 MODEL_NAME_OR_PATH="google/mt5-large"
 HF_TOKEN='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' 
 DATASET_NAME_TRAIN=presencesw/hash_20_256_v2
-DATASET_NAME_VALIDATION=presencesw/phomt_eval_v2
+DATASET_NAME_VALIDATION=presencesw/phomt_eval
 OUTPUT_DIR='outputs'
 SAVE_DIR='model'
 BZ=3
