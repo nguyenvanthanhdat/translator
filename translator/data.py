@@ -28,7 +28,7 @@ class Processor:
                 split = 'train',
                 streaming = self.data_args.streaming,
                 token = self.data_args.hf_key,
-                use_auth_token=self.data_args.use_auth_token,
+                # use_auth_token=self.data_args.use_auth_token,
             )
             if self.data_args.max_train_samples is not None:
                 train_data = list(train_data.take(self.data_args.max_train_samples))
