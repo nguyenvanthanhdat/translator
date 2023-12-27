@@ -18,6 +18,7 @@ from accelerate import PartialState
 import copy 
 import torch
 import gdown
+from peft import PeftModel
 
 def preprocess(examples, language_a, language_b):
     examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
@@ -77,6 +78,8 @@ if __name__ == "__main__":
     parser.add_argument('--max_length', default=256, required=False, type=int)
     parser.add_argument('--num_beams', default=5, required=False)
     parser.add_argument('--gdown_id', default=None, required=False)
+    parser.add_argument('--use_lora', default=None, required=True)
+    parser.add_argument('--lora_path', default=None, required=True, type=bool)
     args = parser.parse_args()
 
     path = os.getcwd()
@@ -118,9 +121,14 @@ if __name__ == "__main__":
         language_b = distribute[1]
 
         if os.path.isdir(os.path.join(path, args.model_name_or_path)):
-            model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path)).to('cuda')
+            model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path))
         else:
-            model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path).to('cuda')
+            model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path)
+
+        if args.use_lora:
+            model = PeftModel.from_pretrained(model, args.lora_path)
+        
+        model = model.to("cuda")
         print("*"*20,f"Preprocess data","*"*20)
         preprocess_dataset = dataset.map(
             preprocess, remove_columns=["en", "vi"], batched=True,
