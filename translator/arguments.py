@@ -164,6 +164,11 @@ class DataTrainingArguments:
         metadata={"help": "The key huggingface for load dataset and model"}
     )
 
+    use_auth_token: bool = field(
+        default=False,
+        metadata={"help": "Use auth token when load_data"}
+    )
+
     def __post_init__(self):
         if self.streaming:
             require_version("datasets>=2.0.0", "The streaming feature requires `datasets>=2.0.0`")
