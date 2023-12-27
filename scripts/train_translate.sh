@@ -11,7 +11,7 @@ SAVE_EVAL_STEP=5_000
 GRA_ACC=14
 
 
-!WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids all --num_processes 2 \
+WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids all --num_processes 2 \
     --config_file translator/accelerate_ds.yml -m translator.training \
     --model_name_or_path $MODEL_NAME_OR_PATH \
     --hf_key $HF_TOKEN \
