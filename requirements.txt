@@ -10,3 +10,4 @@ sentencepiece
 accelerate
 protobuf
 evaluate
+deepspeed
