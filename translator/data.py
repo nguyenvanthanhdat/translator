@@ -27,7 +27,7 @@ class Processor:
                 self.data_args.dataset_name_train,
                 split = 'train',
                 streaming = self.data_args.streaming,
-                token = self.data_args.hf_key.
+                token = self.data_args.hf_key,
                 use_auth_token=self.data_args.use_auth_token,
             )
             if self.data_args.max_train_samples is not None:
