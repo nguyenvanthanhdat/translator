@@ -34,4 +34,5 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     --save_total_limit 3 \
     --evaluation_strategy 'steps' \
     --overwrite_output_dir \
+    --report_to "wandb" \
     --load_best_model_at_end
