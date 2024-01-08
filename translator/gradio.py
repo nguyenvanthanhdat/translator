@@ -21,7 +21,7 @@ def translate(input_text, *input_list):
         input_text = preprocess(input_text, "en: ")
     if input_list[1]:
         input_text = preprocess(input_text, "vi: ")
-    input_ids = tokenizer(input_text, max_length=512, padding='max_length', truncation=True,  return_tensors="pt")
+    input_ids = tokenizer(input_text, max_length=512, padding='max_length', truncation=True,  return_tensors="pt").to("cuda")
     outputs = model.generate(
         **input_ids,
         max_new_tokens=int(input_list[2]) if input_list[2] != '' else 20,

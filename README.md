@@ -17,3 +17,17 @@ Run the scripts below model
 ```sh
 sh scripts/train_translate.sh
 ```
+
+# Interface translate
+
+To interface, first please download checkpoint lora, by run code:
+
+```shell
+sh scripts/down_lora.sh
+```
+
+Then run gradio:
+
+```python
+python -m translator.gradio
+```
