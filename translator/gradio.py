@@ -102,4 +102,4 @@ with gr.Blocks() as demo:
 
     trans_button.click(fn=translate, inputs=input_list, outputs=output)
 
-demo.launch()
+demo.launch(share=True)
