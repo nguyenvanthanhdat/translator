@@ -87,9 +87,9 @@ with gr.Blocks() as demo:
             output = gr.Textbox(None, label="output")
         
     input_list = [
+        text_input, 
         en2vi,
         vi2en,
-        text_input, 
         new_tokens, 
         early,
         sample,
