@@ -11,3 +11,4 @@ accelerate
 protobuf
 evaluate
 deepspeed
+gradio
