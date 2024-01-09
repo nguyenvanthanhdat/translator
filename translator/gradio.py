@@ -11,7 +11,7 @@ model = AutoModelForSeq2SeqLM.from_pretrained("google/mt5-large")
 model = PeftModel.from_pretrained(model, "lora/checkpoint-55000").to("cuda")
 
 def preprocess(input_text, prefix):
-    return prefix + str(input_text)
+    return prefix + input_text + "|<END>|"
     
 
 def translate(input_text, *input_list):
@@ -39,18 +39,18 @@ def translate(input_text, *input_list):
 
 
 def postprocess(output_text):
-    output_text = str(output_text)
-    pattern = re.compile(r'<extra_id_(\d+)>')
-    try:
-        matches = pattern.search(output_text)
-        output_text = output_text.split(matches.group())[0]
-    except:
-        pass
-    output_text = output_text[4:]
-    output_text = output_text.split("-")[0]
-    output_text = output_text.split(".")[0]
-    output_text = output_text + "."
-    
+    # output_text = str(output_text)
+    # pattern = re.compile(r'<extra_id_(\d+)>')
+    # try:
+    #     matches = pattern.search(output_text)
+    #     output_text = output_text.split(matches.group())[0]
+    # except:
+    #     pass
+    # output_text = output_text[4:]
+    # output_text = output_text.split("-")[0]
+    # output_text = output_text.split(".")[0]
+    # output_text = output_text + "."
+    output_text = output_text.split("|<END>|")[0]
     
     return output_text
 
