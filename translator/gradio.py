@@ -46,7 +46,7 @@ def postprocess(output_text):
     #     output_text = output_text.split(matches.group())[0]
     # except:
     #     pass
-    # output_text = output_text[4:]
+    output_text = output_text[4:]
     # output_text = output_text.split("-")[0]
     # output_text = output_text.split(".")[0]
     # output_text = output_text + "."
