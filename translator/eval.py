@@ -20,8 +20,8 @@ import torch
 import gdown
 
 def preprocess(examples, language_a, language_b):
-    examples['input'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
-    examples['label'] = [f'{language_b}: {sample}' for sample in examples[language_b]] 
+    examples['input'] = [f'{language_a}: {sample}|<END>|' for sample in examples[language_a]]
+    examples['label'] = [f'{language_b}: {sample}|<END>|' for sample in examples[language_b]] 
     return examples
 
 def tokenize(examples, token, max_length):
@@ -63,6 +63,7 @@ def postprocess(examples):
     for exp in examples['predict']:
         if exp[:4] in ["vi: ", "en: "]:
             exp = exp[4:]
+        exp = exp.split("|<END>|")
     return examples
 
 if __name__ == "__main__":
