@@ -32,7 +32,8 @@ def translate(input_text, *input_list):
         penalty_alpha=input_list[6],
         temperature=input_list[7],
         top_k=input_list[8],
-        top_p=input_list[9]
+        top_p=input_list[9],
+        use_cache=True,
     )
     output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
     output_text = postprocess(output_text)
