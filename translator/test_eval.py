@@ -25,7 +25,7 @@ def main():
 
     num_beam = 3
     def translated(input_string):
-        input_string = input_string + "|<END>|"
+        input_string = "en: " + input_string + "|<END>|"
         input_ids = tokenizer(input_string, max_length=512, padding='max_length', truncation=True,  return_tensors="pt").to("cuda")
         outputs = model.generate(
             **input_ids,
@@ -35,10 +35,10 @@ def main():
             use_cache=True,
         )
         outputs_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return outputs_text.split("|<END>|")
+        return outputs_text.split("|<END>|")[0][4:]
     
     def translated_batch(input_strings):
-        input_strings = [input_string + "|<END>|" for input_string in input_strings]
+        input_strings = ["en: " + input_string + "|<END>|" for input_string in input_strings]
         input_ids = tokenizer(input_strings, max_length=512, padding='max_length', truncation=True,  return_tensors="pt").to("cuda")
         outputs = model.generate(
             **input_ids,
@@ -48,7 +48,8 @@ def main():
             use_cache=True,
         )
         outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-        outputs = [output.split("|<END>|") for output in outputs]
+        outputs = [output.split("|<END>|")[0] for output in outputs]
+        outputs = [output[4:] for output in outputs]
         return outputs
     
     new_dataset = []
