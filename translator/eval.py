@@ -2,7 +2,7 @@
 # from peft import PeftModel, PeftConfig, LoraConfig
 from transformers import (
     HfArgumentParser,
-    AutoTokenizer, 
+    AutoTokenizer,
     AutoModelForSeq2SeqLM,
     Seq2SeqTrainingArguments,
     T5Tokenizer
@@ -15,14 +15,14 @@ import os, sys, logging
 from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 import evaluate
 from accelerate import PartialState
-import copy 
+import copy
 import torch
 import gdown
 from peft import PeftModel
 
 def preprocess(examples, language_a, language_b):
-    examples['input'] = [f'{language_a}: {sample}|<END>|' for sample in examples[language_a]]
-    examples['label'] = [f'{language_b}: {sample}|<END>|' for sample in examples[language_b]] 
+    examples['input'] = [f'{language_a}: {sample}<END>' for sample in examples[language_a]]
+    examples['label'] = [f'{language_b}: {sample}<END>' for sample in examples[language_b]]
     return examples
 
 def tokenize(examples, token, max_length):
@@ -49,13 +49,14 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     inputs.pop('input')
     inputs.pop('label')
     inputs = {key: torch.tensor(inputs[key]).to('cuda') for key in inputs}
-    outputs = model.generate(**inputs, 
-                            #  max_new_tokens=max_length,
+    outputs = model.generate(**inputs,
+                             max_new_tokens=max_length,
                              num_beams=num_beams,
+                             use_cache=True,
                              early_stopping=True)
     # outputs = [output[0] for output in outputs]
     outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-    
+
     examples['predict'] = outputs
     return examples
 
@@ -63,7 +64,7 @@ def postprocess(examples):
     for exp in examples['predict']:
         if exp[:4] in ["vi: ", "en: "]:
             exp = exp[4:]
-        exp = exp.split("|<END>|")
+        exp = exp.split("<END>")
     return examples
 
 if __name__ == "__main__":
@@ -84,7 +85,7 @@ if __name__ == "__main__":
 
     path = os.getcwd()
     # eval_path = os.path.join(os.getcwd(), "/eval")
-    
+
     # load dataset to evaluate
     print("*"*20,"Load dataset","*"*20)
     if os.path.isdir(os.path.join(path, args.data_test_path)):
@@ -102,12 +103,12 @@ if __name__ == "__main__":
             num_proc=args.num_proc,
         )
     print("*"*20,"Load dataset Done","*"*20)
-    
+
     if args.gdown_id is not None:
         args.model_name_or_path = gdown.download(id = args.gdown_id)
         os.system(f"unzip -n {args.model_name_or_path} -d .")
         args.model_name_or_path = args.model_name_or_path.split(".")[0]
-    
+
 
     # Load tokenizer
     if os.path.isdir(os.path.join(path, args.tokenizer_name_or_path)):
@@ -122,17 +123,17 @@ if __name__ == "__main__":
 
         if os.path.isdir(os.path.join(path, args.model_name_or_path)):
             if args.use_lora:
-                model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path))
-                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000").to("cuda")
-            else:   
-                model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path)).to('cuda')
-                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000").to("cuda")
+                model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path), torch_dtype=torch.float16)
+                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
+            else:
+                model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path), torch_dtype=torch.float16).to('cuda')
+                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
         else:
             if args.use_lora:
-                model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path)
-                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000").to("cuda")
+                model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path, torch_dtype=torch.float16)
+                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
             else:
-                model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path).to('cuda')
+                model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path, torch_dtype=torch.float16).to('cuda')
         print("*"*20,f"Preprocess data","*"*20)
         preprocess_dataset = dataset.map(
             preprocess, remove_columns=["en", "vi"], batched=True,
@@ -142,12 +143,12 @@ if __name__ == "__main__":
             tokenize, batched=True, batch_size=2,
             fn_kwargs={"token": tokenizer, "max_length": args.max_length}
         )
-        
+
 
         for num_beam in args.num_beams.split(","): # [3, 4, 5]
             print("*"*20,f"Translate with num_bema = {num_beam}, {language_a} -> {language_b} ...","*"*20)
             dataset_translated = token_dataset.map(get_output,
-                        fn_kwargs={"tokenizer": tokenizer, "model": model, 
+                        fn_kwargs={"tokenizer": tokenizer, "model": model,
                                 "max_length": args.max_length, "num_beams": int(num_beam)},
                         batched=True,
                         batch_size=args.batch_size)
@@ -160,7 +161,7 @@ if __name__ == "__main__":
     os.chdir("eval")
     bleu = evaluate.load("bleu")
     score = open("score.txt", "w")
-    for file_txt in os.listdir("eval"):
+    for file_txt in os.listdir("."):
         dataset = load_dataset("json", file_txt, split='train')
         try:
             results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
