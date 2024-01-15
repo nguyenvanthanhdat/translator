@@ -4,6 +4,6 @@ DATASET_NAME='presencesw/dataset2'
 # SPLIT='test'
 
 
-!CUDA_VISIBLE_DEVICES=0 python -m translator.translate \
+CUDA_VISIBLE_DEVICES=0 python -m translator.translate \
     --dataset_name $DATASET_NAME \
     --batch_size 20
