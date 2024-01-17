@@ -64,7 +64,7 @@ def postprocess(examples):
     for exp in examples['predict']:
         if exp[:4] in ["vi: ", "en: "]:
             exp = exp[4:]
-        exp = exp.split("<END>")
+        exp = exp.split("<END>")[0]
     return examples
 
 if __name__ == "__main__":
