@@ -2,7 +2,8 @@ MODEL_NAME_OR_PATH="google/mt5-large"
 # MODEL_NAME_OR_PATH="model/pt_full_model"
 TOKEN_NAME='google/mt5-large'
 HF_TOKEN='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' 
-DATA_TEST_PATH='presencesw/phomt_eval'
+# DATA_TEST_PATH='presencesw/phomt_eval'
+DATA_TEST_PATH='presencesw/hash_test'
 SPLIT='test'
 
 
