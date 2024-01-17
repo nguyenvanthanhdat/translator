@@ -28,7 +28,7 @@ def translate(input_text, *input_list):
         max_new_tokens=int(input_list[2]) if input_list[2] != '' else 20,
         early_stopping=input_list[3],
         # do_sample=input_list[4],
-        num_beams=input_list[5],
+        num_beams=input_list[4],
         # penalty_alpha=input_list[6],
         # temperature=input_list[7],
         # top_k=input_list[8],
