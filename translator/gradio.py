@@ -12,7 +12,7 @@ model = AutoModelForSeq2SeqLM.from_pretrained("google/mt5-large", torch_dtype=to
 model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
 
 def preprocess(input_text, prefix):
-    return prefix + input_text + "|<END>|"
+    return prefix + input_text + "<END>"
     
 
 def translate(input_text, *input_list):
@@ -27,12 +27,12 @@ def translate(input_text, *input_list):
         **input_ids,
         max_new_tokens=int(input_list[2]) if input_list[2] != '' else 20,
         early_stopping=input_list[3],
-        do_sample=input_list[4],
+        # do_sample=input_list[4],
         num_beams=input_list[5],
-        penalty_alpha=input_list[6],
-        temperature=input_list[7],
-        top_k=input_list[8],
-        top_p=input_list[9],
+        # penalty_alpha=input_list[6],
+        # temperature=input_list[7],
+        # top_k=input_list[8],
+        # top_p=input_list[9],
         use_cache=True,
     )
     output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -52,7 +52,7 @@ def postprocess(output_text):
     # output_text = output_text.split("-")[0]
     # output_text = output_text.split(".")[0]
     # output_text = output_text + "."
-    output_text = output_text.split("|<END>|")[0]
+    output_text = output_text.split("<END>")[0]
     
     return output_text
 
@@ -73,18 +73,18 @@ with gr.Blocks() as demo:
                 gr.Markdown("<center>Control the length output</center>")
                 with gr.Row():
                     new_tokens = gr.Textbox(label="max_new_tokens")
-                    early = gr.Checkbox(label="early_stopping")
+                    # early = gr.Checkbox(label="early_stopping")
             with gr.Group():
                 gr.Markdown("<center>Control the generate strategy</center>")
-                sample = gr.Checkbox(label="do_sampling")
+                # sample = gr.Checkbox(label="do_sampling")
                 num_beam = gr.Slider(label="num_beam", minimum=1, maximum=10, step=1)
-                penaty_alpha = gr.Slider(label="penaty_alpha", minimum=0, maximum=1)
-            with gr.Group():
-                gr.Markdown("<center>Manipulation output logits</center>")
-                with gr.Row():
-                    temp = gr.Slider(label="temperature", minimum=0, maximum=3)
-                    top_k = gr.Slider(label="top_k", minimum=0, maximum=100)
-                    top_p = gr.Slider(label="top_p", minimum=0, maximum=1)
+                # penaty_alpha = gr.Slider(label="penaty_alpha", minimum=0, maximum=1)
+            # with gr.Group():
+            #     gr.Markdown("<center>Manipulation output logits</center>")
+            #     with gr.Row():
+            #         temp = gr.Slider(label="temperature", minimum=0, maximum=3)
+            #         top_k = gr.Slider(label="top_k", minimum=0, maximum=100)
+            #         top_p = gr.Slider(label="top_p", minimum=0, maximum=1)
         with gr.Column():
             output = gr.Textbox(None, label="output")
         
@@ -93,13 +93,13 @@ with gr.Blocks() as demo:
         en2vi,
         vi2en,
         new_tokens, 
-        early,
-        sample,
+        # early,
+        # sample,
         num_beam,
-        penaty_alpha,
-        temp,
-        top_k,
-        top_p,
+        # penaty_alpha,
+        # temp,
+        # top_k,
+        # top_p,
     ]
 
     trans_button.click(fn=translate, inputs=input_list, outputs=output)
