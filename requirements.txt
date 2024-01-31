@@ -10,3 +10,6 @@ sentencepiece
 accelerate
 protobuf
 evaluate
+deepspeed
+wandb
+scipy

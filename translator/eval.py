@@ -80,7 +80,8 @@ if __name__ == "__main__":
     parser.add_argument('--max_length', default=512, required=False, type=int)
     parser.add_argument('--num_beams', default=5, required=False)
     parser.add_argument('--gdown_id', default=None, required=False)
-    parser.add_argument('--use_lora', default=None, required=False, type=bool)
+    parser.add_argument('--use_lora', default=None, required=True)
+    parser.add_argument('--lora_path', default=None, required=True, type=bool)
     args = parser.parse_args()
 
     path = os.getcwd()
