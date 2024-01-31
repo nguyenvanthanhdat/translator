@@ -5,8 +5,8 @@ from transformers import AutoTokenizer
 logger = logging.getLogger(__name__)
 
 def a_2_b(examples, language_a, language_b):
-    examples['inputs'] = [f'{language_a}: {sample}' for sample in examples[language_a]]
-    examples['targets'] = [f'{language_b}: {sample}' for sample in examples[language_b]]
+    examples['inputs'] = [f'{language_a}: {sample} <EOS>' for sample in examples[language_a]]
+    examples['targets'] = [f'{language_b}: {sample} <EOS>' for sample in examples[language_b]]
     return examples
 
 def multi_trans(dataset, language_a, language_b):
