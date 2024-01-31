@@ -1,4 +1,4 @@
-MODEL_NAME_OR_PATH="flant5"
+MODEL_NAME_OR_PATH="google/mt5-large"
 HF_TOKEN='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'
 DATASET_NAME_TRAIN=presencesw/hash_v3
 DATASET_NAME_VALIDATION=presencesw/phomt_eval
