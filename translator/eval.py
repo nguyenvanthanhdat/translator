@@ -51,7 +51,6 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     # inputs = {key: torch.tensor(inputs[key]).to('cuda') for key in inputs}
     outputs = model.generate(**inputs, 
                             #  max_new_tokens=max_length,
-                             max_length=max_length,
                              num_beams=num_beams,
                              early_stopping=True)
     # outputs = [output[0] for output in outputs]
@@ -80,7 +79,8 @@ if __name__ == "__main__":
     parser.add_argument('--max_length', default=256, required=False, type=int)
     parser.add_argument('--num_beams', default=5, required=False)
     parser.add_argument('--gdown_id', default=None, required=False)
-    parser.add_argument('--use_lora', default=None, required=False)
+    parser.add_argument('--use_lora', default=None, required=True)
+    parser.add_argument('--lora_path', default=None, required=True, type=bool)
     args = parser.parse_args()
 
     path = os.getcwd()
@@ -138,10 +138,10 @@ if __name__ == "__main__":
             preprocess, remove_columns=["en", "vi"], batched=True,
             fn_kwargs={"language_a": language_a,"language_b":language_b}
         )
-        # token_dataset = preprocess_dataset.map(
-        #     tokenize, batched=True,
-        #     fn_kwargs={"token": tokenizer, "max_length": args.max_length}
-        # )
+        token_dataset = preprocess_dataset.map(
+            tokenize, batched=True, batch_size=2,
+            fn_kwargs={"token": tokenizer, "max_length": args.max_length}
+        )
         
 
         for num_beam in args.num_beams.split(","): # [3, 4, 5]
@@ -152,21 +152,21 @@ if __name__ == "__main__":
                         batched=True,
                         batch_size=args.batch_size)
             print("*"*20,"Postprocess data","*"*20)
-            dataset_translated = dataset_translated.map(postprocess, batched=True)
+            # dataset_translated = dataset_translated.map(postprocess, batched=True)
             dataset_translated = dataset_translated.remove_columns(['len', "input_ids", "attention_mask"])
             # dataset_translated.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
             dataset_translated.to_json(f"eval/{language_a}{language_b}-beam{num_beam}.txt", force_ascii=False)
 
-        os.chdir("eval")
-        bleu = evaluate.load("bleu")
-        score = open("score.txt", "wb")
-        for file_txt in os.listdir("eval"):
-            dataset = load_dataset("json", file_txt, split='train')
-            try:
-                results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
-            except:
-                results = 0
-        score.write(f"{file_txt}: bleu - {results}\n")
-        score.close()
-        os.chdir("..")
-        os.system("zip -r result.zip eval")
+    # os.chdir("eval")
+    # bleu = evaluate.load("bleu")
+    # score = open("score.txt", "w")
+    # for file_txt in os.listdir("eval"):
+    #     dataset = load_dataset("json", file_txt, split='train')
+    #     try:
+    #         results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
+    #     except:
+    #         results = 0
+    # score.write(f"{file_txt}: bleu - {results}\n")
+    # score.close()
+    # os.chdir("..")
+    # os.system("zip -r result.zip eval")

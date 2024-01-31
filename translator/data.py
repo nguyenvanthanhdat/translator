@@ -46,8 +46,9 @@ class Processor:
                     batched=True,
                     remove_columns=['en', 'vi']
                 )
+                en_2_vi = en_2_vi.shuffle(seed=self.seed, buffer_size=10_000)
+                vi_2_en = vi_2_en.shuffle(seed=self.seed+1, buffer_size=10_000)
                 train_data = interleave_datasets([en_2_vi, vi_2_en], seed=self.seed)
-                train_data = train_data.shuffle(seed=self.seed, buffer_size=10_000)
             dataset['train'] = self.process_fn(train_data)
         else:
             raise Exception(f'Not found `dataset_name_train` path.')
