@@ -7,7 +7,7 @@ DATA_TEST_PATH='presencesw/hash_test'
 SPLIT='test'
 
 
-!CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids 0,1 --num_processes=2 -m translator.eval \
+CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids 0,1 --num_processes=2 -m translator.eval \
     --model_name_or_path $MODEL_NAME_OR_PATH \
     --tokenizer_name_or_path $TOKEN_NAME \
     --hf_key $HF_TOKEN \
