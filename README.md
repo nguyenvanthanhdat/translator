@@ -24,15 +24,23 @@ Then run gradio:
 python -m translator.gradio
 ```
 
-# 4. Use llm to evaluate the translation
+# 4. Translate dataset benchmark
 
-## 4.1 Check the End token exist after postprocessing
+To Translate the dataset benchmark, such as PhoMT you can run:
+
+```shell
+CUDA_VISIBLE_DEVICES=0 python -m translator.translate --dataset_name <HF repo> --batch_size <batch_size>
+```
+
+# 5. Use llm to evaluate the translation
+
+## 5.1 Check the End token exist after postprocessing
 
 ```shell
 python -m translator.eval_translate --dataset_name <HF repo>
 ```
 
-## 4.2 Evaluate the translation by llm
+## 5.2 Evaluate the translation by llm
 
 ```shell
 CUDA_VISIBLE_DEVICES=0 python -m translator.eval_translate_END --dataset_name <HF repop>
