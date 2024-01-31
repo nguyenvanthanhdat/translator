@@ -32,6 +32,30 @@ To Translate the dataset benchmark, such as PhoMT you can run:
 CUDA_VISIBLE_DEVICES=0 python -m translator.translate --dataset_name <HF repo> --batch_size <batch_size>
 ```
 
+When the dataset and model is not large and it enough to run in kaggle you can run:
+
+```shell
+MODEL_NAME_OR_PATH=<Model_name>
+TOKEN_NAME=<Model_name>
+HF_TOKEN=<HF_token>
+DATA_TEST_PATH=<HF_repo>
+SPLIT='test'
+
+
+CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids 0,1 --num_processes=2 -m translator.eval \
+    --model_name_or_path $MODEL_NAME_OR_PATH \
+    --tokenizer_name_or_path $TOKEN_NAME \
+    --hf_key $HF_TOKEN \
+    --data_test_path $DATA_TEST_PATH \
+    --split $SPLIT \
+    --num_proc 2 \
+    --batch_size 1 \
+    --max_len 512 \
+    --num_beams 3,4,5 \
+    --hf_key $HF_TOKEN \
+    --use_lora True 
+```
+
 # 5. Use llm to evaluate the translation
 
 ## 5.1 Check the End token exist after postprocessing
