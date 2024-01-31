@@ -1,13 +1,12 @@
-MODEL_NAME_OR_PATH="google/mt5-large"
-# MODEL_NAME_OR_PATH="model/pt_full_model"
+MODEL_NAME_OR_PATH="flanT5-large-2-10-2023"
 HF_TOKEN='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' 
 DATASET_NAME_TRAIN='presencesw/hash_v3'
 DATASET_NAME_VALIDATION='presencesw/phomt_eval'
 OUTPUT_DIR='outputs'
 SAVE_DIR='model'
 BZ=3
-ALL_STEP=50_000_000
-SAVE_EVAL_STEP=5_000
+ALL_STEP=100000
+SAVE_EVAL_STEP=5000
 GRA_ACC=14
 
 
@@ -33,6 +32,7 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     --logging_steps 1000 \
     --save_total_limit 3 \
     --evaluation_strategy 'steps' \
+    --learning_rate 3e-5 \
+    --report_to 'wandb' \
     --overwrite_output_dir \
-    --report_to "wandb" \
     --load_best_model_at_end
