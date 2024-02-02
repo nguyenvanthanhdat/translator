@@ -8,8 +8,10 @@ import torch
 
 
 tokenizer = AutoTokenizer.from_pretrained("google/mt5-large")
-model = AutoModelForSeq2SeqLM.from_pretrained("google/mt5-large", torch_dtype=torch.float16)
-model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
+model = AutoModelForSeq2SeqLM.from_pretrained("google/mt5-large")
+model = PeftModel.from_pretrained(model, "lora/checkpoint-55000")
+model.save_pretrained("inference")
+model.from_pretrained("inference", torch_dtype=torch.float16).to("cuda")
 
 def preprocess(input_text, prefix):
     return prefix + input_text + "<END>"
