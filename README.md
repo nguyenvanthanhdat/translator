@@ -60,12 +60,24 @@ CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids 0,1 --num_processes=2 -m tr
 
 ## 5.1 Check the End token exist after postprocessing
 
+The code run to "END" remain after postprocess split special token "|`<END>`|"
+
 ```shell
 python -m translator.eval_translate --dataset_name <HF repo>
 ```
 
 ## 5.2 Evaluate the translation by llm
 
+Use llm [(Vistral-7B)](https://huggingface.co/Viet-Mistral/Vistral-7B-Chat) to evaluate the translation
+
 ```shell
 CUDA_VISIBLE_DEVICES=0 python -m translator.eval_translate_END --dataset_name <HF repop>
+```
+
+## 6. Inference with gradio
+
+Run the code below for fast inference:
+
+```shell
+CUDA_VISIBLE_DEVICES=0 python -m translator.gradio
 ```
