@@ -1,15 +1,15 @@
 MODEL_NAME_OR_PATH="google/mt5-large"
-HF_TOKEN='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'
-DATASET_NAME_TRAIN=presencesw/hash_v3
 DATASET_NAME_VALIDATION=presencesw/phomt_eval
-OUTPUT_DIR='outputs'
-SAVE_DIR='model'
-BZ=3
-ALL_STEP=100000
+HF_TOKEN='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'
+DATASET_NAME_TRAIN=presencesw/hash_v6
+OUTPUT_DIR='outputs_v6'
+SAVE_DIR='model_v6'
+BZ=1
+ALL_STEP=45000
 SAVE_EVAL_STEP=5000
-GRA_ACC=8
-LORA_R=16
-LORA_ALPHA=16
+GRA_ACC=14
+LORA_R=256
+LORA_ALPHA=128
 
 WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids 0,1 --num_processes 2 \
     --config_file translator/accelerate_ds.yml -m translator.training \
@@ -25,10 +25,9 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     --use_lora \
     --linear_layer \
     --att_blocks \
-    --lora_dropout 0.0 \
+    --lora_dropout 0.05 \
     --per_device_train_batch_size $BZ \
     --per_device_eval_batch_size $BZ \
-    --num_train_epochs 4 \
     --gradient_accumulation_steps $GRA_ACC \
     --max_len 512 \
     --save_steps $SAVE_EVAL_STEP \
