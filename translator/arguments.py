@@ -73,7 +73,15 @@ class ModelArguments:
             )
         },
     )
-    quantize:bool = field(
+    quantize_4bit:bool = field(
+        default=False,
+        metadata={
+            "help" : (
+                "Quantize 4bit"
+            )
+        }
+    )
+    quantize_8bit:bool = field(
         default=False,
         metadata={
             "help" : (

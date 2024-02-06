@@ -125,12 +125,17 @@ def main():
     tokenizer.padding_side = 'right'
     
     # Quantize config
-    if model_args.quantize and lora_args.use_lora:
+    if model_args.quantize_4bit and lora_args.use_lora:
         quant_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type='nf4',
             bnb_4bit_compute_dtype=torch.float16,
             bnb_4bit_use_double_quant=False
+        )
+    if model_args.quantize_8bit and lora_args.use_lora:
+        quant_config = BitsAndBytesConfig(
+            load_in_8bit=True,
+            llm_int8_enable_fp32_cpu_offload=True,
         )
     
     # cls = AutoModelForSeq2SeqLM if 'mt' in model_args.model_name_or_path else AutoModelForCausalLM
@@ -139,6 +144,9 @@ def main():
     if model_args.model_name_or_path:
         base_model = cls.from_pretrained(
             model_args.model_name_or_path,
+            quantization_config=quant_config,
+            low_cpu_mem_usage=True,
+            torch_dtype=getattr(torch, "bfloat16"),
         )
         base_model.config.use_cache = False
         base_model.config.pretraining_tp = 1
