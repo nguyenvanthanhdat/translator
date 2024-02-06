@@ -27,7 +27,7 @@ from peft import (
     LoraConfig,
     get_peft_model,
     TaskType,
-    prepare_model_for_int8_training
+    prepare_model_for_kbit_training
 )
 
 from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
@@ -190,8 +190,9 @@ def main():
         )
         
         # prepare int-8 model for training
-        if lora_args.use_int8_training:
-            base_model = prepare_model_for_int8_training(base_model)
+        # if lora_args.use_int8_training:
+        #     base_model = prepare_model_for_int8_training(base_model)
+        base_model = prepare_model_for_kbit_training(base_model)
 
         # add LoRA adaptor
         model = get_peft_model(base_model, lora_config)
