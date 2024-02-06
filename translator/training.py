@@ -196,7 +196,7 @@ def main():
             base_model = prepare_model_for_kbit_training(base_model)
             base_model.gradient_checkpointing_enable()  # reduce number of stored activations
             base_model.enable_input_require_grads()
-            training_args.optim = "paged_adamw_8bit"
+            # training_args.optim = "paged_adamw_8bit"
             training_args.fp16=True
 
         # add LoRA adaptor
