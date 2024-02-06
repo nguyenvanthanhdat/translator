@@ -192,7 +192,10 @@ def main():
         # prepare int-8 model for training
         # if lora_args.use_int8_training:
         #     base_model = prepare_model_for_int8_training(base_model)
-        base_model = prepare_model_for_kbit_training(base_model)
+        if model_args.quantize_4bit or model_args.quantize_8bit:
+            base_model = prepare_model_for_kbit_training(base_model)
+            base_model.gradient_checkpointing_enable()  # reduce number of stored activations
+            base_model.enable_input_require_grads()
 
         # add LoRA adaptor
         model = get_peft_model(base_model, lora_config)
