@@ -39,13 +39,15 @@ class Processor:
                     a_2_b,
                     fn_kwargs={"language_a": "en", "language_b": "vi"},
                     batched=True,
-                    remove_columns=['en', 'vi']
+                    # remove_columns=['en', 'vi']
+                    remove_columns=train_data.column_names
                 )
                 vi_2_en = train_data.map(
                     a_2_b,
                     fn_kwargs={"language_a": "vi", "language_b": "en"},
                     batched=True,
-                    remove_columns=['en', 'vi']
+                    # remove_columns=['en', 'vi']
+                    remove_columns=train_data.column_names
                 )
                 en_2_vi = en_2_vi.shuffle(seed=self.seed, buffer_size=10_000)
                 vi_2_en = vi_2_en.shuffle(seed=self.seed+1, buffer_size=10_000)
