@@ -197,7 +197,7 @@ def main():
             base_model.gradient_checkpointing_enable()  # reduce number of stored activations
             base_model.enable_input_require_grads()
             # training_args.optim = "paged_adamw_8bit"
-            training_args.fp16=True
+            training_args.bf16=True
 
         # add LoRA adaptor
         model = get_peft_model(base_model, lora_config)
