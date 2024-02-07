@@ -41,4 +41,5 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     --learning_rate 3e-5 \
     --report_to 'wandb' \
     --overwrite_output_dir \
+    --ddp_find_unused_parameters=False \
     --load_best_model_at_end 
