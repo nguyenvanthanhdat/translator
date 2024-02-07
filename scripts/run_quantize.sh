@@ -12,7 +12,7 @@ LORA_R=256
 LORA_ALPHA=128
 
 WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids 0,1 --num_processes 1 \
-    --config_file translator/accelerate_ds.yml -m translator.training \
+    --config_file translator/accelerate.yml -m translator.training \
     --model_name_or_path $MODEL_NAME_OR_PATH \
     --hf_key $HF_TOKEN \
     --output_dir $OUTPUT_DIR \
