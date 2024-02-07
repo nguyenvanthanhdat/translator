@@ -135,7 +135,7 @@ def main():
     if model_args.quantize_8bit and lora_args.use_lora:
         quant_config = BitsAndBytesConfig(
             load_in_8bit=True,
-            llm_int8_enable_fp32_cpu_offload=True,
+            # llm_int8_enable_fp32_cpu_offload=True,
         )
     
     # cls = AutoModelForSeq2SeqLM if 'mt' in model_args.model_name_or_path else AutoModelForCausalLM
