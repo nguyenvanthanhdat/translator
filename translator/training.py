@@ -147,8 +147,8 @@ def main():
             quantization_config=quant_config,
             low_cpu_mem_usage=True,
             torch_dtype=getattr(torch, "bfloat16"),
-            device_map="auto"
-            # device_map={'':torch.cuda.current_device()}
+            # device_map="auto"
+            device_map={'':torch.cuda.current_device()}
         )
         base_model.config.use_cache = False
         base_model.config.pretraining_tp = 1
