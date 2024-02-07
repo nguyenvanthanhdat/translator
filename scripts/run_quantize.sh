@@ -24,7 +24,7 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     --max_steps $ALL_STEP \
     --streaming \
     --use_lora \
-    --quantize_8bit \
+    --quantize_4bit \
     --linear_layer \
     --att_blocks \
     --lora_dropout 0.05 \
