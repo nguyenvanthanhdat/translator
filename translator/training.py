@@ -129,8 +129,8 @@ def main():
         quant_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type='nf4',
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_use_double_quant=False
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True
         )
     if model_args.quantize_8bit and lora_args.use_lora:
         quant_config = BitsAndBytesConfig(
@@ -147,7 +147,7 @@ def main():
             quantization_config=quant_config,
             low_cpu_mem_usage=True,
             torch_dtype=getattr(torch, "bfloat16"),
-            device_map="auto"
+            # device_map="auto"
         )
         base_model.config.use_cache = False
         base_model.config.pretraining_tp = 1
