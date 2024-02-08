@@ -25,7 +25,7 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     --streaming \
     --use_lora \
     --r $LORA_R \
-    --lora_alpha $LORA_ALPHA
+    --lora_alpha $LORA_ALPHA \
     --quantize_8bit \
     --linear_layer \
     --att_blocks \
