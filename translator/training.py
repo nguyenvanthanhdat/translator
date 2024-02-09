@@ -13,7 +13,8 @@ from transformers import (
     AutoConfig,
     AutoTokenizer,
     AutoModelForSeq2SeqLM,
-    default_data_collator
+    default_data_collator,
+    BitsAndBytesConfig,
 )
 
 from peft import (
@@ -22,7 +23,6 @@ from peft import (
     TaskType,
     prepare_model_for_kbit_training
 )
-
 from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
 from .data import Processor
 
