@@ -6,9 +6,7 @@ from argparse import ArgumentParser
 
 
 
-
 print("LOAD MODEL")
-
 model = AutoModelForSeq2SeqLM.from_pretrained("google/mt5-large")
 model = PeftModel.from_pretrained(model, "lora/checkpoint-55000")
 print("SAVE MODEL")

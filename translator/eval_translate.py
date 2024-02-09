@@ -4,9 +4,7 @@ from datasets import load_dataset
 
 
 
-
 print("LOAD MODEL")
-
 llm = AutoModelForCausalLM.from_pretrained(
     "presencesw/Vistral-7B-Chat",
     model_file="Vistral-7B-Chat-q5_0.gguf",

@@ -1,8 +1,6 @@
 import os
 import sys
-import torch
 import logging
-from accelerate import Accelerator, state
 import transformers
 from transformers.trainer_utils import get_last_checkpoint
 from transformers import (
@@ -15,11 +13,6 @@ from transformers import (
     AutoConfig,
     AutoTokenizer,
     AutoModelForSeq2SeqLM,
-    AutoModelForCausalLM,
-    BitsAndBytesConfig,
-    GenerationConfig,
-    MBartTokenizer,
-    MBartTokenizerFast,
     default_data_collator
 )
 
@@ -31,10 +24,7 @@ from peft import (
 )
 
 from .arguments import ModelArguments, DataTrainingArguments, LoraArguments
-# from .data import Processor, SBSProcessor, SBSDataCollator
 from .data import Processor
-# from .trainer import SBSTrainer
-
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -123,21 +113,9 @@ def main():
     # Fix for fp16
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = 'right'
-    
-    # Quantize config
-    if model_args.quantize and lora_args.use_lora:
-        quant_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type='nf4',
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_use_double_quant=False
-        )
-    
-    # cls = AutoModelForSeq2SeqLM if 'mt' in model_args.model_name_or_path else AutoModelForCausalLM
-    cls = AutoModelForSeq2SeqLM
 
     if model_args.model_name_or_path:
-        base_model = cls.from_pretrained(
+        base_model = AutoModelForSeq2SeqLM.from_pretrained(
             model_args.model_name_or_path,
         )
         base_model.config.use_cache = False
@@ -169,8 +147,6 @@ def main():
                 elif "t5" in model_args.model_name_or_path:
                     target_modules = target_module_dict['T5']
 
-
-        # target_modules = [item for item in lora_args.target_modules.split(',')]
         lora_config = LoraConfig(
             r=lora_args.lora_r,
             target_modules = target_modules,
@@ -192,7 +168,12 @@ def main():
     else:
         model = base_model
 
-    processor = Processor(tokenizer, training_args.per_device_train_batch_size, data_args, training_args.seed).__call__()
+    processor = Processor(
+        tokenizer, 
+        training_args.per_device_train_batch_size, 
+        data_args, 
+        training_args.seed
+    ).__call__()
 
     if data_args.pad_to_max_length:
         data_collator = default_data_collator
