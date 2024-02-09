@@ -1,10 +1,7 @@
-from datasets import load_dataset
-import gradio as gr
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import os
-from peft import PeftModel
-import re
 import torch
+import gradio as gr
+from peft import PeftModel
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 
 tokenizer = AutoTokenizer.from_pretrained("google/mt5-large")
@@ -13,9 +10,16 @@ model = PeftModel.from_pretrained(model, "lora/checkpoint-55000")
 model.save_pretrained("inference")
 model = AutoModelForSeq2SeqLM.from_pretrained("inference", torch_dtype=torch.float16).to("cuda")    
 
+
+
 def preprocess(input_text, prefix):
     return prefix + input_text + "<END>"
     
+def postprocess(output_text):
+    output_text = output_text[4:]
+    output_text = output_text.split("<END>")[0]
+    
+    return output_text
 
 def translate(input_text, *input_list):
     if input_list[0] == input_list[1]:
@@ -41,22 +45,6 @@ def translate(input_text, *input_list):
     output_text = postprocess(output_text)
     return output_text
 
-
-def postprocess(output_text):
-    # output_text = str(output_text)
-    # pattern = re.compile(r'<extra_id_(\d+)>')
-    # try:
-    #     matches = pattern.search(output_text)
-    #     output_text = output_text.split(matches.group())[0]
-    # except:
-    #     pass
-    output_text = output_text[4:]
-    # output_text = output_text.split("-")[0]
-    # output_text = output_text.split(".")[0]
-    # output_text = output_text + "."
-    output_text = output_text.split("<END>")[0]
-    
-    return output_text
 
 
 with gr.Blocks() as demo:

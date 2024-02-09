@@ -1,17 +1,16 @@
-from datasets import load_dataset
-import gradio as gr
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import os
-from peft import PeftModel
-import re
 import torch
 import json
 from tqdm import tqdm
+
+from datasets import load_dataset
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from peft import PeftModel
 
 
 tokenizer = AutoTokenizer.from_pretrained("google/mt5-large")
 model = AutoModelForSeq2SeqLM.from_pretrained("google/mt5-large", torch_dtype=torch.float16)
 model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
+
 
 def main():
     dataset = load_dataset(

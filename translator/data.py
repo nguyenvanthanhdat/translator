@@ -1,14 +1,12 @@
-import os
-import glob
+
 import logging
 
-from datasets import Dataset, load_dataset, load_from_disk, interleave_datasets
-from transformers import DataCollatorForSeq2Seq
-from translator.features.utils import multi_trans_steaming, multi_trans, a_2_b
+from datasets import Dataset, load_dataset, interleave_datasets
+from translator.features.utils import multi_trans, a_2_b
+
 
 
 logger = logging.getLogger(__name__)
-
 
 
 class Processor:
