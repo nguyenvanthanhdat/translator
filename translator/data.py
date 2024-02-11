@@ -21,6 +21,11 @@ class Processor:
 
         # train data
         if self.data_args.dataset_name_train is not None:
+            if self.data_args.download_before:
+                temp_dataset = load_dataset(self.data_args.dataset_name_train)
+                temp_dataset.save_to_disk("data")
+                self.data_args.dataset_name_train = "data"
+            print(f"Load the dataset from: {self.data_args.dataset_name_train}")
             train_data = load_dataset(
                 self.data_args.dataset_name_train,
                 split = 'train',

@@ -167,6 +167,15 @@ class DataTrainingArguments:
             )
         },
     )
+    download_before: bool = field(
+        default=False,
+        metadata={
+            "help": (
+                "The option the choose action download dataset before not",
+                "Useage: for small dataset or for prevent the internet issuse (not stable)"
+            )
+        }
+    )
     hf_key: str = field(
         default=None,
         metadata={"help": "The key huggingface for load dataset and model"}
