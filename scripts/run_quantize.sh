@@ -15,6 +15,7 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     accelerate launch --gpu_ids 0,1 --num_processes 2 \
     --config_file translator/accelerate.yml -m translator.training \
     --model_name_or_path $MODEL_NAME_OR_PATH \
+    --download_before \
     --hf_key $HF_TOKEN \
     --output_dir $OUTPUT_DIR \
     --do_train \
@@ -38,8 +39,8 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     --eval_steps $SAVE_EVAL_STEP \
     --logging_steps 100 \
     --warmup_ratio 0.1 \
-	--learning_rate 5e-5 \
-	--lr_scheduler_type 'linear' \
+	--learning_rate 1e-5 \
+	--lr_scheduler_type 'cosine' \
     --save_total_limit 3 \
     --evaluation_strategy 'steps' \
     --learning_rate 3e-5 \
