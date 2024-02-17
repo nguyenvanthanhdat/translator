@@ -34,9 +34,10 @@ WANDB_PROJECT=translator WANDB_API_KEY=138c38699b36fb0223ca0f94cde30c6d531895ca 
     --eval_steps $SAVE_EVAL_STEP \
     --logging_steps 100 \
     --warmup_ratio 0.1 \
+    --weight_decay 0.01 \
     --save_total_limit 3 \
     --evaluation_strategy 'steps' \
-    --learning_rate 3e-5 \
+    --learning_rate 1e-3 \
     --report_to 'wandb' \
     --overwrite_output_dir \
     --load_best_model_at_end 
