@@ -226,7 +226,7 @@ def main():
     model.config.use_cache = False  # silence the warnings. Please re-enable for inference!
     
     # Training
-    trainer.train()
+    trainer.train(resume_from_checkpoint=True)
 
     # Save Model
     trainer.model.save_pretrained(training_args.output_dir)
