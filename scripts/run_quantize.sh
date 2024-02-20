@@ -1,4 +1,5 @@
 MODEL_NAME_OR_PATH="google/mt5-large"
+# MODEL_NAME_OR_PATH="model_v1"
 DATASET_NAME_VALIDATION=presencesw/phomt_eval
 HF_TOKEN='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'
 DATASET_NAME_TRAIN=presencesw/hash_v6
