@@ -40,7 +40,7 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     # print(type(inputs))
     # print(inputs)
     # inptus = dict(inputs)
-    inputs.pop('len')
+    # inputs.pop('len')
     inputs.pop('input')
     inputs.pop('label')
     inputs = {key: torch.tensor(inputs[key]).to('cuda') for key in inputs}
