@@ -165,5 +165,5 @@ if __name__ == "__main__":
             results = 0
     score.write(f"{file_txt}: bleu - {results}\n")
     score.close()
-    os.chdir("..")
-    os.system("zip -r result.zip eval")
+    # os.chdir("..")
+    # os.system("zip -r result.zip eval")
