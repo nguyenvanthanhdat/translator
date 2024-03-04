@@ -16,8 +16,8 @@ from peft import PeftModel
 
 
 def preprocess(examples, language_a, language_b):
-    examples['input'] = [f'{language_a}: {sample}<END>' for sample in examples[language_a]]
-    examples['label'] = [f'{language_b}: {sample}<END>' for sample in examples[language_b]]
+    examples['input'] = [f'{language_a}: {sample}<EOS>' for sample in examples[language_a]]
+    examples['label'] = [f'{language_b}: {sample}<EOS>' for sample in examples[language_b]]
     return examples
 
 def tokenize(examples, token, max_length):
@@ -59,7 +59,7 @@ def postprocess(examples):
     for exp in examples['predict']:
         if exp[:4] in ["vi: ", "en: "]:
             exp = exp[4:]
-        exp = exp.split("<END>")[0]
+        exp = exp.split("<EOS>")[0]
     return examples
 
 if __name__ == "__main__":
@@ -119,15 +119,14 @@ if __name__ == "__main__":
 
         if os.path.isdir(os.path.join(path, args.model_name_or_path)):
             if args.use_lora:
-                model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path), torch_dtype=torch.float16)
-                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
+                model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path))
+                model = PeftModel.from_pretrained(model, args.lora_path).to("cuda")
             else:
                 model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path), torch_dtype=torch.float16).to('cuda')
-                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
         else:
             if args.use_lora:
-                model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path, torch_dtype=torch.float16)
-                model = PeftModel.from_pretrained(model, "lora/checkpoint-55000", torch_dtype=torch.float16).to("cuda")
+                model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path)
+                model = PeftModel.from_pretrained(model, args.lora_path).to("cuda")
             else:
                 model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path, torch_dtype=torch.float16).to('cuda')
         print("*"*20,f"Preprocess data","*"*20)
