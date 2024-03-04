@@ -121,12 +121,16 @@ if __name__ == "__main__":
             if args.use_lora:
                 model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path))
                 model = PeftModel.from_pretrained(model, args.lora_path).to("cuda")
+                model.save_pretrained("inference")
+                model = AutoModelForSeq2SeqLM.from_pretrained("inference", torch_dtype=torch.float16).to("cuda")  
             else:
                 model = AutoModelForSeq2SeqLM.from_pretrained(os.path.join(path, args.model_name_or_path), torch_dtype=torch.float16).to('cuda')
         else:
             if args.use_lora:
                 model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path)
                 model = PeftModel.from_pretrained(model, args.lora_path).to("cuda")
+                model.save_pretrained("inference")
+                model = AutoModelForSeq2SeqLM.from_pretrained("inference", torch_dtype=torch.float16).to("cuda")  
             else:
                 model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name_or_path, torch_dtype=torch.float16).to('cuda')
         print("*"*20,f"Preprocess data","*"*20)
