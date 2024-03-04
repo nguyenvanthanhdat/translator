@@ -153,7 +153,7 @@ if __name__ == "__main__":
                         batch_size=args.batch_size)
             print("*"*20,"Postprocess data","*"*20)
             # dataset_translated = dataset_translated.map(postprocess, batched=True)
-            dataset_translated = dataset_translated.remove_columns(['len', "input_ids", "attention_mask"])
+            dataset_translated = dataset_translated.remove_columns(["input_ids", "attention_mask"])
             # dataset_translated.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
             dataset_translated.to_json(f"eval/{language_a}{language_b}-beam{num_beam}.txt", force_ascii=False)
 
