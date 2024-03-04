@@ -76,7 +76,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_beams', default=5, required=False)
     parser.add_argument('--gdown_id', default=None, required=False)
     parser.add_argument('--use_lora', default=None, required=True)
-    parser.add_argument('--lora_path', default=None, required=True, type=bool)
+    parser.add_argument('--lora_path', default=None, required=True)
     args = parser.parse_args()
 
     path = os.getcwd()
