@@ -56,10 +56,20 @@ def get_output(examples, model, tokenizer, max_length, num_beams):
     return examples
 
 def postprocess(examples):
+    predict = []
+    label = []
     for exp in examples['predict']:
         if exp[:4] in ["vi: ", "en: "]:
             exp = exp[4:]
-        exp = exp.split("<EOS>")[0]
+        predict.append(exp.split("<EOS>")[0])
+            # exp = exp.split("<EOS>")[0]
+    for exp in examples['label']:
+        if exp[:4] in ["vi: ", "en: "]:
+            exp = exp[4:]
+        label.append(exp.split("<EOS>")[0])
+            # exp = exp.split("<EOS>")[0]
+    examples['predict'] = predict
+    examples['label'] = label
     return examples
 
 if __name__ == "__main__":
@@ -152,7 +162,7 @@ if __name__ == "__main__":
                         batched=True,
                         batch_size=args.batch_size)
             print("*"*20,"Postprocess data","*"*20)
-            # dataset_translated = dataset_translated.map(postprocess, batched=True)
+            dataset_translated = dataset_translated.map(postprocess, batched=True)
             dataset_translated = dataset_translated.remove_columns(["input_ids", "attention_mask"])
             # dataset_translated.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
             dataset_translated.to_json(f"eval/{language_a}{language_b}-beam{num_beam}.txt", force_ascii=False)
