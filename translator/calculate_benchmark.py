@@ -7,7 +7,10 @@ def main(lora_path):
     bleu = evaluate.load("bleu")
     score = open("score.txt", "w")
     for file_txt in os.listdir("."):
-        dataset = load_dataset("json", file_txt, split='train')
+        if file_txt.split(".")[1] == "json":
+            dataset = load_dataset("json", file_txt, split='train')
+        else:
+            continue
         try:
             results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
         except:
