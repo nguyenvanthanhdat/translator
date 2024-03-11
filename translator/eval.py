@@ -165,18 +165,7 @@ if __name__ == "__main__":
             dataset_translated = dataset_translated.map(postprocess, batched=True)
             dataset_translated = dataset_translated.remove_columns(["input_ids", "attention_mask"])
             # dataset_translated.to_json(os.path.join(eval_path,f"{language_a}{language_b}-beam{num_beam}.txt"))
-            dataset_translated.to_json(f"eval/{language_a}{language_b}-beam{num_beam}.txt", force_ascii=False)
+            dataset_translated.to_json(f"eval-{args.lora_path}/{language_a}{language_b}-beam{num_beam}.txt", force_ascii=False)
 
-    os.chdir("eval")
-    bleu = evaluate.load("bleu")
-    score = open("score.txt", "w")
-    for file_txt in os.listdir("."):
-        dataset = load_dataset("json", file_txt, split='train')
-        try:
-            results = bleu.compute(predictions=dataset['predict'], references=dataset['label'])
-        except:
-            results = 0
-    score.write(f"{file_txt}: bleu - {results}\n")
-    score.close()
-    # os.chdir("..")
-    # os.system("zip -r result.zip eval")
+
+    
