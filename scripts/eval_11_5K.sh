@@ -20,3 +20,5 @@ LORA_PATH="lora/checkpoint-11500"
     --num_beams 3,4,5 \
     --hf_key $HF_TOKEN \
     --use_lora True
+
+python translator/calculate_benchmark.py $LORA_PATH
