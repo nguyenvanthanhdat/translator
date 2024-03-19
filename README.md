@@ -2,6 +2,12 @@
 
 To down dataset test (1000 samples), please run `sh scripts/down_data.sh`
 
+The model had trained in 2 stage:
+
+Stage 1 Dataset with token lengths: 20 <= x <= 511 : [link](https://huggingface.co/datasets/presencesw/hash_v6)
+
+Stage 2 Dataset phoMT: x < 20 : [link](https://huggingface.co/datasets/presencesw/hash_v6.5?row=1)
+
 # 2. Fine-tune Model
 
 Run the scripts below model
@@ -10,7 +16,13 @@ Run the scripts below model
 sh scripts/run.sh
 ```
 
-# 3. Interface translate
+Wandb when training 2 stage:
+
+Stage 1: [link 1](https://wandb.ai/nguyenvanthanhdat1810/translator/runs/41bx0kze?nw=nwusernguyenvanthanhdat1810) - [link 2](https://wandb.ai/nguyenvanthanhdat1810/translator/runs/0f0edaga?nw=nwusernguyenvanthanhdat1810) (continue train)
+
+Stage 2: [link](https://wandb.ai/nguyenvanthanhdat1810/translator/runs/2p1phaxs?nw=nwusernguyenvanthanhdat1810)
+
+# Interface translate
 
 To interface, first please download checkpoint lora, by run code:
 
@@ -60,7 +72,7 @@ CUDA_VISIBLE_DEVICES=0,1 accelerate launch --gpu_ids 0,1 --num_processes=2 -m tr
 
 ## 5.1 Check the End token exist after postprocessing
 
-The code run to "END" remain after postprocess split special token "|`<END>`|"
+The code run to "END" remain after postprocess split special token "`<EOS>`"
 
 ```shell
 python -m translator.eval_translate --dataset_name <HF repo>
