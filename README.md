@@ -6,7 +6,7 @@ The model had trained in 2 stage:
 
 Stage 1 Dataset with token lengths: 20 <= x <= 511 : [link](https://huggingface.co/datasets/presencesw/hash_v6)
 
-Stage 2 Dataset phoMT: x < 20 : [link](https://huggingface.co/datasets/presencesw/hash_v6.5?row=1)
+Stage 2 Dataset phoMT: [link](https://huggingface.co/datasets/presencesw/hash_v6.5?row=1)
 
 # 2. Fine-tune Model
 
