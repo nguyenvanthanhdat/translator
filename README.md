@@ -81,3 +81,5 @@ Run the code below for fast inference:
 ```shell
 CUDA_VISIBLE_DEVICES=0 python -m translator.gradio
 ```
+# translator
+Machine Translation with LoRA finetuning
